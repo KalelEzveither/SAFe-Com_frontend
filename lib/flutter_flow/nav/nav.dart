@@ -80,6 +80,31 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: HomeWidget.routePath,
           builder: (context, params) =>
               params.isEmpty ? NavBarPage(initialPage: 'Home') : HomeWidget(),
+        ),
+        FFRoute(
+          name: BarracasHortifrutiWidget.routeName,
+          path: BarracasHortifrutiWidget.routePath,
+          builder: (context, params) => BarracasHortifrutiWidget(),
+        ),
+        FFRoute(
+          name: BarracasDoceWidget.routeName,
+          path: BarracasDoceWidget.routePath,
+          builder: (context, params) => BarracasDoceWidget(),
+        ),
+        FFRoute(
+          name: BarracasSalgadosWidget.routeName,
+          path: BarracasSalgadosWidget.routePath,
+          builder: (context, params) => BarracasSalgadosWidget(),
+        ),
+        FFRoute(
+          name: BarracasTemperosWidget.routeName,
+          path: BarracasTemperosWidget.routePath,
+          builder: (context, params) => BarracasTemperosWidget(),
+        ),
+        FFRoute(
+          name: BarracasArtesanatosWidget.routeName,
+          path: BarracasArtesanatosWidget.routePath,
+          builder: (context, params) => BarracasArtesanatosWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

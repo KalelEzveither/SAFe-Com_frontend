@@ -1,4 +1,5 @@
 import '/flutter_flow/flutter_flow_util.dart';
+import '/index.dart';
 import 'barracas_artesanatos_widget.dart' show BarracasArtesanatosWidget;
 import 'package:flutter/material.dart';
 

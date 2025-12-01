@@ -385,8 +385,8 @@ class _LoginWidgetState extends State<LoginWidget> {
                       ),
                     ),
                     FFButtonWidget(
-                      onPressed: () {
-                        print('Button pressed ...');
+                      onPressed: () async {
+                        context.pushNamed(HomeWidget.routeName);
                       },
                       text: '      Entrar             ',
                       icon: FaIcon(

@@ -1,4 +1,5 @@
 import '/flutter_flow/flutter_flow_checkbox_group.dart';
+import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -90,6 +91,18 @@ class _CadastroFeiranteWidgetState extends State<CadastroFeiranteWidget> {
                               fit: BoxFit.cover,
                             ),
                           ),
+                        ),
+                        FlutterFlowIconButton(
+                          borderRadius: 8.0,
+                          buttonSize: 40.0,
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: FlutterFlowTheme.of(context).info,
+                            size: 24.0,
+                          ),
+                          onPressed: () async {
+                            context.safePop();
+                          },
                         ),
                       ],
                     ),
@@ -823,7 +836,7 @@ class _CadastroFeiranteWidgetState extends State<CadastroFeiranteWidget> {
                       child: FFButtonWidget(
                         onPressed: () async {
                           context.pushNamed(
-                            BarracasWidget.routeName,
+                            HomeWidget.routeName,
                             extra: <String, dynamic>{
                               kTransitionInfoKey: TransitionInfo(
                                 hasTransition: true,

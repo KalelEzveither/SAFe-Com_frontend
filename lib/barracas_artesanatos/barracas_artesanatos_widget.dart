@@ -2,6 +2,7 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -68,7 +69,7 @@ class _BarracasArtesanatosWidgetState extends State<BarracasArtesanatosWidget> {
                 buttonSize: 40.0,
                 icon: Icon(
                   Icons.keyboard_backspace,
-                  color: Color(0xFF14181B),
+                  color: Color(0xFF156F00),
                   size: 24.0,
                 ),
                 onPressed: () {
@@ -400,8 +401,10 @@ class _BarracasArtesanatosWidgetState extends State<BarracasArtesanatosWidget> {
                                                   ),
                                             ),
                                             FFButtonWidget(
-                                              onPressed: () {
-                                                print('Button pressed ...');
+                                              onPressed: () async {
+                                                context.pushNamed(
+                                                    DetalhesBarracaWidget
+                                                        .routeName);
                                               },
                                               text: 'Ver',
                                               options: FFButtonOptions(
@@ -624,8 +627,10 @@ class _BarracasArtesanatosWidgetState extends State<BarracasArtesanatosWidget> {
                                                   ),
                                             ),
                                             FFButtonWidget(
-                                              onPressed: () {
-                                                print('Button pressed ...');
+                                              onPressed: () async {
+                                                context.pushNamed(
+                                                    DetalhesBarracaWidget
+                                                        .routeName);
                                               },
                                               text: 'Ver',
                                               options: FFButtonOptions(
@@ -848,8 +853,10 @@ class _BarracasArtesanatosWidgetState extends State<BarracasArtesanatosWidget> {
                                                   ),
                                             ),
                                             FFButtonWidget(
-                                              onPressed: () {
-                                                print('Button pressed ...');
+                                              onPressed: () async {
+                                                context.pushNamed(
+                                                    DetalhesBarracaWidget
+                                                        .routeName);
                                               },
                                               text: 'ver',
                                               options: FFButtonOptions(

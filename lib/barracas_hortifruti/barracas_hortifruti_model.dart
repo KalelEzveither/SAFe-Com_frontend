@@ -1,4 +1,5 @@
 import '/flutter_flow/flutter_flow_util.dart';
+import '/index.dart';
 import 'barracas_hortifruti_widget.dart' show BarracasHortifrutiWidget;
 import 'package:flutter/material.dart';
 

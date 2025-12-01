@@ -2,6 +2,7 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'barracas_hortifruti_model.dart';
@@ -62,7 +63,7 @@ class _BarracasHortifrutiWidgetState extends State<BarracasHortifrutiWidget> {
                 buttonSize: 40.0,
                 icon: Icon(
                   Icons.keyboard_backspace,
-                  color: Color(0xFF14181B),
+                  color: Color(0xFF156F00),
                   size: 24.0,
                 ),
                 onPressed: () async {
@@ -88,26 +89,7 @@ class _BarracasHortifrutiWidgetState extends State<BarracasHortifrutiWidget> {
               ),
             ].divide(SizedBox(width: 8.0)),
           ),
-          actions: [
-            Align(
-              alignment: AlignmentDirectional(0.0, 0.0),
-              child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                child: FlutterFlowIconButton(
-                  borderRadius: 40.0,
-                  buttonSize: 40.0,
-                  icon: Icon(
-                    Icons.search_rounded,
-                    color: Color(0xFF14181B),
-                    size: 24.0,
-                  ),
-                  onPressed: () {
-                    print('IconButton pressed ...');
-                  },
-                ),
-              ),
-            ),
-          ],
+          actions: [],
           centerTitle: false,
           elevation: 0.0,
         ),
@@ -445,8 +427,10 @@ class _BarracasHortifrutiWidgetState extends State<BarracasHortifrutiWidget> {
                                             ],
                                           ),
                                           FFButtonWidget(
-                                            onPressed: () {
-                                              print('Button pressed ...');
+                                            onPressed: () async {
+                                              context.pushNamed(
+                                                  DetalhesBarracaWidget
+                                                      .routeName);
                                             },
                                             text: 'Ver Barraca',
                                             options: FFButtonOptions(
@@ -675,8 +659,10 @@ class _BarracasHortifrutiWidgetState extends State<BarracasHortifrutiWidget> {
                                             ],
                                           ),
                                           FFButtonWidget(
-                                            onPressed: () {
-                                              print('Button pressed ...');
+                                            onPressed: () async {
+                                              context.pushNamed(
+                                                  DetalhesBarracaWidget
+                                                      .routeName);
                                             },
                                             text: 'Ver Barraca',
                                             options: FFButtonOptions(
@@ -1147,8 +1133,10 @@ class _BarracasHortifrutiWidgetState extends State<BarracasHortifrutiWidget> {
                                                   ),
                                             ),
                                             FFButtonWidget(
-                                              onPressed: () {
-                                                print('Button pressed ...');
+                                              onPressed: () async {
+                                                context.pushNamed(
+                                                    DetalhesBarracaWidget
+                                                        .routeName);
                                               },
                                               text: 'Ver',
                                               options: FFButtonOptions(
@@ -1371,8 +1359,10 @@ class _BarracasHortifrutiWidgetState extends State<BarracasHortifrutiWidget> {
                                                   ),
                                             ),
                                             FFButtonWidget(
-                                              onPressed: () {
-                                                print('Button pressed ...');
+                                              onPressed: () async {
+                                                context.pushNamed(
+                                                    DetalhesBarracaWidget
+                                                        .routeName);
                                               },
                                               text: 'ver',
                                               options: FFButtonOptions(
@@ -1595,8 +1585,10 @@ class _BarracasHortifrutiWidgetState extends State<BarracasHortifrutiWidget> {
                                                   ),
                                             ),
                                             FFButtonWidget(
-                                              onPressed: () {
-                                                print('Button pressed ...');
+                                              onPressed: () async {
+                                                context.pushNamed(
+                                                    DetalhesBarracaWidget
+                                                        .routeName);
                                               },
                                               text: 'ver\n',
                                               options: FFButtonOptions(

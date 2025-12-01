@@ -836,7 +836,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                       child: FFButtonWidget(
                         onPressed: () async {
                           context.pushNamed(
-                            BarracasWidget.routeName,
+                            PoliticaPrivacidadeWidget.routeName,
                             extra: <String, dynamic>{
                               kTransitionInfoKey: TransitionInfo(
                                 hasTransition: true,

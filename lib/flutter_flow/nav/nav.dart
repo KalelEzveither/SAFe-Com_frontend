@@ -52,11 +52,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => LoginWidget(),
         ),
         FFRoute(
-          name: BarracasWidget.routeName,
-          path: BarracasWidget.routePath,
+          name: FiltroBarracasWidget.routeName,
+          path: FiltroBarracasWidget.routePath,
           builder: (context, params) => params.isEmpty
-              ? NavBarPage(initialPage: 'Barracas')
-              : BarracasWidget(),
+              ? NavBarPage(initialPage: 'FiltroBarracas')
+              : FiltroBarracasWidget(),
         ),
         FFRoute(
           name: PerfilWidget.routeName,
@@ -105,6 +105,73 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: BarracasArtesanatosWidget.routeName,
           path: BarracasArtesanatosWidget.routePath,
           builder: (context, params) => BarracasArtesanatosWidget(),
+        ),
+        FFRoute(
+          name: DetalhesBarracaWidget.routeName,
+          path: DetalhesBarracaWidget.routePath,
+          builder: (context, params) => params.isEmpty
+              ? NavBarPage(initialPage: 'detalhes_Barraca')
+              : DetalhesBarracaWidget(),
+        ),
+        FFRoute(
+          name: CriarProdutoWidget.routeName,
+          path: CriarProdutoWidget.routePath,
+          builder: (context, params) => CriarProdutoWidget(),
+        ),
+        FFRoute(
+          name: DetalhesProdutoWidget.routeName,
+          path: DetalhesProdutoWidget.routePath,
+          builder: (context, params) => DetalhesProdutoWidget(),
+        ),
+        FFRoute(
+          name: CarrinhoWidget.routeName,
+          path: CarrinhoWidget.routePath,
+          builder: (context, params) => CarrinhoWidget(),
+        ),
+        FFRoute(
+          name: CadastroBarracaWidget.routeName,
+          path: CadastroBarracaWidget.routePath,
+          builder: (context, params) => CadastroBarracaWidget(),
+        ),
+        FFRoute(
+          name: MeusPedidosWidget.routeName,
+          path: MeusPedidosWidget.routePath,
+          builder: (context, params) => MeusPedidosWidget(),
+        ),
+        FFRoute(
+          name: MeusProdutosWidget.routeName,
+          path: MeusProdutosWidget.routePath,
+          builder: (context, params) => MeusProdutosWidget(),
+        ),
+        FFRoute(
+          name: GestaoReservasWidget.routeName,
+          path: GestaoReservasWidget.routePath,
+          builder: (context, params) => GestaoReservasWidget(),
+        ),
+        FFRoute(
+          name: DetalhesReservaWidget.routeName,
+          path: DetalhesReservaWidget.routePath,
+          builder: (context, params) => DetalhesReservaWidget(),
+        ),
+        FFRoute(
+          name: PoliticasAplicativoWidget.routeName,
+          path: PoliticasAplicativoWidget.routePath,
+          builder: (context, params) => PoliticasAplicativoWidget(),
+        ),
+        FFRoute(
+          name: PerfilFeiranteWidget.routeName,
+          path: PerfilFeiranteWidget.routePath,
+          builder: (context, params) => PerfilFeiranteWidget(),
+        ),
+        FFRoute(
+          name: PagamentoPixWidget.routeName,
+          path: PagamentoPixWidget.routePath,
+          builder: (context, params) => PagamentoPixWidget(),
+        ),
+        FFRoute(
+          name: EditarProdutoWidget.routeName,
+          path: EditarProdutoWidget.routePath,
+          builder: (context, params) => EditarProdutoWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

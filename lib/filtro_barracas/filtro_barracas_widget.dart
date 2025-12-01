@@ -5,28 +5,28 @@ import '/index.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'barracas_model.dart';
-export 'barracas_model.dart';
+import 'filtro_barracas_model.dart';
+export 'filtro_barracas_model.dart';
 
-class BarracasWidget extends StatefulWidget {
-  const BarracasWidget({super.key});
+class FiltroBarracasWidget extends StatefulWidget {
+  const FiltroBarracasWidget({super.key});
 
-  static String routeName = 'Barracas';
-  static String routePath = '/barracas';
+  static String routeName = 'FiltroBarracas';
+  static String routePath = '/filtroBarracas';
 
   @override
-  State<BarracasWidget> createState() => _BarracasWidgetState();
+  State<FiltroBarracasWidget> createState() => _FiltroBarracasWidgetState();
 }
 
-class _BarracasWidgetState extends State<BarracasWidget> {
-  late BarracasModel _model;
+class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
+  late FiltroBarracasModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => BarracasModel());
+    _model = createModel(context, () => FiltroBarracasModel());
   }
 
   @override

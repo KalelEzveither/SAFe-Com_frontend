@@ -685,7 +685,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget> {
                                 0.0, 15.0, 0.0, 0.0),
                             child: FFButtonWidget(
                               onPressed: () async {
-                                context.pushNamed(BarracasWidget.routeName);
+                                context.pushNamed(HomeWidget.routeName);
                               },
                               text: '       Criar Conta       ',
                               options: FFButtonOptions(

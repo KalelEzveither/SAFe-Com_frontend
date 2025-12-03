@@ -1,5 +1,4 @@
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/form_field_controller.dart';
 import '/index.dart';
 import 'cadastro_feirante_widget.dart' show CadastroFeiranteWidget;
 import 'package:flutter/material.dart';
@@ -25,12 +24,8 @@ class CadastroFeiranteModel extends FlutterFlowModel<CadastroFeiranteWidget> {
   TextEditingController? senhaTextController2;
   late bool senhaVisibility2;
   String? Function(BuildContext, String?)? senhaTextController2Validator;
-  // State field(s) for categoriasBarraca widget.
-  FormFieldController<List<String>>? categoriasBarracaValueController;
-  List<String>? get categoriasBarracaValues =>
-      categoriasBarracaValueController?.value;
-  set categoriasBarracaValues(List<String>? v) =>
-      categoriasBarracaValueController?.value = v;
+  // State field(s) for CheckboxAceitoTermos widget.
+  bool? checkboxAceitoTermosValue;
 
   @override
   void initState(BuildContext context) {

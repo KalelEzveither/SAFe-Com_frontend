@@ -1,3 +1,4 @@
+import '../services/auth_service.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -834,46 +835,99 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                     Align(
                       alignment: AlignmentDirectional(0.0, 0.0),
                       child: FFButtonWidget(
-                        onPressed: () async {
-                          context.pushNamed(
-                            PoliticaPrivacidadeWidget.routeName,
-                            extra: <String, dynamic>{
-                              kTransitionInfoKey: TransitionInfo(
-                                hasTransition: true,
-                                transitionType: PageTransitionType.fade,
-                                duration: Duration(milliseconds: 0),
-                              ),
-                            },
-                          );
-                        },
-                        text:
-                            '                      Criar Conta                     ',
-                        options: FFButtonOptions(
-                          height: 46.2,
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                              16.0, 0.0, 16.0, 0.0),
-                          iconPadding: EdgeInsetsDirectional.fromSTEB(
-                              0.0, 0.0, 0.0, 0.0),
-                          color: Color(0xF3FD8E2B),
-                          textStyle:
-                              FlutterFlowTheme.of(context).titleSmall.override(
-                                    font: GoogleFonts.interTight(
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .titleSmall
-                                          .fontStyle,
+                          onPressed: () async {
+                            // Coleta os dados dos campos
+                            final nome = _model.nomeTextController.text.trim();
+                            final email = _model.eMailTextController.text.trim();
+                            final senha = _model.senhaTextController1.text;
+                            final senhaConfirm = _model.senhaTextController2.text;
+
+                            // Validação simples
+                            if (nome.isEmpty || email.isEmpty || senha.isEmpty || senhaConfirm.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Preencha todos os campos!')),
+                              );
+                              return;
+                            }
+                            if (senha != senhaConfirm) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('As senhas não coincidem!')),
+                              );
+                              return;
+                            }
+
+                            // Placeholder para cpfCnpj e telefone
+                            final userData = {
+                              'nome': nome,
+                              'email': email,
+                              'senha': senha,
+                              'cpfCnpj': '00000010110', // Placeholder
+                              'telefone': '000000000',   // Placeholder
+                            };
+
+                            // Chama o AuthService
+                            final authService = AuthService();
+                            final success = await authService.register(userData);
+
+                            if (success) {
+                              // Tenta login automático
+                              final loginResult = await authService.login(email, senha);
+                              if (loginResult != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Cadastro e login realizados com sucesso!')),
+                                );
+                                // Navega para a home
+                                context.goNamed(
+                                  HomeWidget.routeName,
+                                  extra: <String, dynamic>{
+                                    kTransitionInfoKey: TransitionInfo(
+                                      hasTransition: true,
+                                      transitionType: PageTransitionType.fade,
+                                      duration: Duration(milliseconds: 15),
                                     ),
-                                    color: Color(0xFFFFFCFC),
-                                    letterSpacing: 0.0,
-                                    fontWeight: FontWeight.bold,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .titleSmall
-                                        .fontStyle,
-                                  ),
-                          elevation: 0.0,
-                          borderRadius: BorderRadius.circular(24.0),
+                                  },
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Cadastro feito, mas erro ao logar. Faça login manualmente.')),
+                                );
+                                context.pushNamed(
+                                  LoginWidget.routeName,
+                                  extra: <String, dynamic>{
+                                    kTransitionInfoKey: TransitionInfo(
+                                      hasTransition: true,
+                                      transitionType: PageTransitionType.fade,
+                                      duration: Duration(milliseconds: 15),
+                                    ),
+                                  },
+                                );
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Erro ao cadastrar. Tente novamente.')),
+                              );
+                            }
+                          },
+                          text: '                      Criar Conta                     ',
+                          options: FFButtonOptions(
+                            height: 46.2,
+                            padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                            iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                            color: Color(0xF3FD8E2B),
+                            textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                              font: GoogleFonts.interTight(
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
+                              ),
+                              color: Color(0xFFFFFCFC),
+                              letterSpacing: 0.0,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
+                            ),
+                            elevation: 0.0,
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
                         ),
-                      ),
                     ),
                     Padding(
                       padding:

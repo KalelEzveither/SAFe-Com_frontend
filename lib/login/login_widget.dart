@@ -416,7 +416,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                         // 5. Verifica sucesso
                         if (usuario != null) {
                           print("Login Sucesso: ${usuario['nome']}");
-                          // TODO: Salvar o ID do usuário globalmente aqui (ex: AppStateNotifier)
                           
                           if (context.mounted) {
                             context.pushNamed(HomeWidget.routeName);

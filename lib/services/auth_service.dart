@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'session_service.dart';
 
 class AuthService {
   // AVISO! Voce deve trocar este IP pelo IPv4 do teu computador!
@@ -26,7 +27,10 @@ class AuthService {
 
       if (response.statusCode == 200) {
         // Sucesso! Retorna os dados do utilizador
-        return jsonDecode(response.body);
+        final userData = jsonDecode(response.body);
+        // Salva a sessão do usuário
+        await SessionService.saveUser(userData);
+        return userData;
       } else {
         print('Erro no Login: ${response.body}');
         return null;

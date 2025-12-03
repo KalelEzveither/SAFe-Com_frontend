@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'home_model.dart';
 export 'home_model.dart';
 
+import '/services/session_service.dart';
+
 class HomeWidget extends StatefulWidget {
   const HomeWidget({super.key});
 
@@ -19,6 +21,8 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
   late HomeModel _model;
 
+  String _nomeUsuario = "Visitante";
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -29,6 +33,19 @@ class _HomeWidgetState extends State<HomeWidget> {
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
     _model.textFieldFocusNode!.addListener(() => safeSetState(() {}));
+    _carregarUsuario();
+  }
+
+  void _carregarUsuario() async {
+    // Chama seu serviço existente para pegar o usuário
+    final userData = await SessionService.getUser();
+
+    // Verifica se veio dados e se tem o campo 'nome'
+    if (userData != null && userData.containsKey('nome')) {
+      setState(() {
+        _nomeUsuario = userData['nome']; // Atualiza a variável da tela
+      });
+    }
   }
 
   @override
@@ -56,7 +73,7 @@ class _HomeWidgetState extends State<HomeWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Olá, [fulano]',
+                'Olá, $_nomeUsuario',
                 style: FlutterFlowTheme.of(context).labelSmall.override(
                       font: GoogleFonts.inter(
                         fontWeight:

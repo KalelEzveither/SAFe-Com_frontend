@@ -777,7 +777,7 @@ class _CadastroFeiranteWidgetState extends State<CadastroFeiranteWidget> {
                               controller:
                                   _model.categoriasBarracaValueController ??=
                                       FormFieldController<List<String>>(
-                                List.from([''] ?? []),
+                                List.from(['']), 
                               ),
                               activeColor: FlutterFlowTheme.of(context).primary,
                               checkColor: FlutterFlowTheme.of(context).info,

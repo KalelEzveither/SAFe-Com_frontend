@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'login_model.dart';
+
+import '/services/auth_service.dart';
 export 'login_model.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -22,6 +24,10 @@ class _LoginWidgetState extends State<LoginWidget> {
   late LoginModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Instancia o servico de autentificacao
+  final _authService = AuthService(); 
+  bool _isLoading = false; // Trava o botao enquanto carrega
 
   @override
   void initState() {
@@ -385,8 +391,46 @@ class _LoginWidgetState extends State<LoginWidget> {
                       ),
                     ),
                     FFButtonWidget(
-                      onPressed: () async {
-                        context.pushNamed(HomeWidget.routeName);
+                      onPressed: _isLoading ? null : () async { // Se estiver carregando, desabilita
+                        // 1. Validação básica (opcional, mas bom ter)
+                        if (_model.emailTextController.text.isEmpty || 
+                            _model.senhaTextController.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Preencha e-mail e senha!')),
+                          );
+                          return;
+                        }
+
+                        // 2. Mostra carregamento
+                        setState(() => _isLoading = true);
+
+                        // 3. Chama o Backend
+                        final usuario = await _authService.login(
+                          _model.emailTextController.text,
+                          _model.senhaTextController.text,
+                        );
+
+                        // 4. Para carregamento
+                        if (mounted) setState(() => _isLoading = false);
+
+                        // 5. Verifica sucesso
+                        if (usuario != null) {
+                          print("Login Sucesso: ${usuario['nome']}");
+                          // TODO: Salvar o ID do usuário globalmente aqui (ex: AppStateNotifier)
+                          
+                          if (context.mounted) {
+                            context.pushNamed(HomeWidget.routeName);
+                          }
+                        } else {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Login falhou. Verifique seu email ou senha.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
                       },
                       text: '      Entrar             ',
                       icon: FaIcon(

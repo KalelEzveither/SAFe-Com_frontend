@@ -4,7 +4,7 @@ import 'session_service.dart';
 
 class OrderService {
   // Ajuste o IP se necessário
-  static const String _apiBaseUrl = 'http://192.168.0.118:8080/api/pedidos';
+  static const String _apiBaseUrl = 'http://10.0.39.92:8080/api/pedidos';
 
   // Envia o pedido para o Java
   Future<Map<String, dynamic>> finalizarPedido(String metodo, String entrega, {double? troco}) async {

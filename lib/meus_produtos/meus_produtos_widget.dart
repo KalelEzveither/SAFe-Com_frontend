@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import '../editar_produto/editar_produto_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -203,15 +206,23 @@ class _MeusProdutosWidgetState extends State<MeusProdutosWidget> {
                                                 padding: EdgeInsetsDirectional.fromSTEB(0.0, 1.0, 1.0, 1.0),
                                                 child: ClipRRect(
                                                   borderRadius: BorderRadius.circular(6.0),
-                                                  child: Image.network(
-                                                    (produto.imagemUrl.isNotEmpty)
-                                                        ? produto.imagemUrl
-                                                        : 'https://via.placeholder.com/80',
-                                                    width: 80.0,
-                                                    height: 80.0,
-                                                    fit: BoxFit.cover,
-                                                    errorBuilder: (ctx, err, stack) => Icon(Icons.fastfood, size: 40, color: Colors.grey),
-                                                  ),
+                                                  child: produto.imagemUrl != null && produto.imagemUrl!.isNotEmpty
+                                                      ? Image.memory( // <-- MUDANÇA AQUI: Usando Image.memory
+                                                          base64Decode(produto.imagemUrl!), // <-- Decodifica o Base64 para Bytes
+                                                          width: 80.0,
+                                                          height: 80.0,
+                                                          fit: BoxFit.cover,
+                                                          errorBuilder: (ctx, err, stack) => Icon(Icons.fastfood, size: 40, color: Colors.grey),
+                                                        )
+                                                      : Container( // <-- Bloco para imagem placeholder se a URL estiver vazia
+                                                          width: 80.0,
+                                                          height: 80.0,
+                                                          decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(6.0),
+                                                            color: FlutterFlowTheme.of(context).alternate,
+                                                          ),
+                                                          child: Icon(Icons.fastfood, size: 40, color: FlutterFlowTheme.of(context).secondaryText),
+                                                        ),
                                                 ),
                                               ),
                                               
@@ -268,7 +279,7 @@ class _MeusProdutosWidgetState extends State<MeusProdutosWidget> {
                                                       highlightColor: Colors.transparent,
                                                       onTap: () async {
                                                         // Vai para Editar passando o produto
-                                                        /*
+                                                        
                                                         await Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
@@ -276,7 +287,7 @@ class _MeusProdutosWidgetState extends State<MeusProdutosWidget> {
                                                           ),
                                                         );
                                                         _carregarDados(); // Atualiza ao voltar
-                                                        */
+                                                        
                                                         print("Clicou em editar: ${produto.nome}");
                                                       },
                                                       child: Icon(

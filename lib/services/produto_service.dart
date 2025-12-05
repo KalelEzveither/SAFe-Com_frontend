@@ -4,7 +4,7 @@ import '../model/produto_model.dart';
 
 class ProdutoService {
   // Ajuste o IP se necessário
-  static const String _apiBaseUrl = 'http://192.168.0.118:8080/api/produtos';
+  static const String _apiBaseUrl = 'http://10.0.39.92:8080/api/produtos';
 
   // Criar Produto
   Future<bool> criarProduto(Produto produto) async {

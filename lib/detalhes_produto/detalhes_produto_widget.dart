@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -194,26 +196,26 @@ class _DetalhesProdutoWidgetState extends State<DetalhesProdutoWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Imagem
-                    Stack(
-                      children: [
-                        Container(
-                          width: double.infinity, height: 350.0,
-                          decoration: BoxDecoration(color: FlutterFlowTheme.of(context).alternate),
-                          child: Image.network(
-                            widget.produto.imagemUrl.isNotEmpty ? widget.produto.imagemUrl : 'https://via.placeholder.com/400x300',
-                            width: double.infinity, height: 350.0, fit: BoxFit.cover,
-                            errorBuilder: (ctx, err, stack) => Icon(Icons.fastfood, size: 100, color: Colors.grey),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(16.0, 44.0, 0.0, 0.0),
-                          child: FlutterFlowIconButton(
-                            borderColor: Colors.transparent, borderRadius: 30.0, borderWidth: 1.0, buttonSize: 40.0, fillColor: Color(0x7F000000),
-                            icon: Icon(Icons.arrow_back_rounded, color: Colors.white, size: 24.0),
-                            onPressed: () async { context.safePop(); },
-                          ),
-                        ),
-                      ],
+                    ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(8.0),
+                        topRight: Radius.circular(8.0),
+                      ),
+                      child: widget.produto.imagemUrl != null && widget.produto.imagemUrl!.isNotEmpty
+                          ? Image.memory(
+                              base64Decode(widget.produto.imagemUrl!),
+                              width: double.infinity,
+                              height: 400.0,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => 
+                                  Container(height: 200, color: Colors.grey[200], child: Icon(Icons.store, size: 50)),
+                            )
+                          : Container(
+                              width: double.infinity,
+                              height: 400.0,
+                              color: FlutterFlowTheme.of(context).alternate,
+                              child: Icon(Icons.store, size: 60, color: FlutterFlowTheme.of(context).secondaryText),
+                            ),
                     ),
                     
                     // Nome e Avisos

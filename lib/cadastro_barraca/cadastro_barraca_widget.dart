@@ -97,7 +97,7 @@ class _CadastroBarracaWidgetState extends State<CadastroBarracaWidget> {
 
     try {
       // 5. Chamada API 
-      final url = Uri.parse('http://192.168.0.118:8080/api/auth/feirante'); 
+      final url = Uri.parse('http://10.0.39.92:8080/api/auth/feirante'); 
       
       final response = await http.post(
         url,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -228,24 +230,29 @@ class _BarracasPorCategoriaWidgetState extends State<BarracasPorCategoriaWidget>
                                 child: Row(
                                   children: [
                                     // Imagem da Barraca
-                                    Container(
-                                      width: 80.0,
-                                      height: 80.0,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFFFFA130),
-                                        borderRadius: BorderRadius.circular(12.0),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(12.0),
-                                        child: Image.network(
-                                          (barraca.imagemUrl != null && barraca.imagemUrl!.isNotEmpty) 
-                                              ? barraca.imagemUrl! 
-                                              : 'https://via.placeholder.com/80',
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (ctx, err, stack) => Icon(Icons.store, color: Colors.white),
-                                        ),
-                                      ),
+                                    Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 1.0, 1.0, 1.0),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(6.0),
+                                      child: barraca.imagemUrl != null && barraca.imagemUrl!.isNotEmpty
+                                          ? Image.memory( // <-- MUDANÇA AQUI: Usando Image.memory
+                                              base64Decode(barraca.imagemUrl!), // <-- Decodifica o Base64 para Bytes
+                                              width: 80.0,
+                                              height: 80.0,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (ctx, err, stack) => Icon(Icons.fastfood, size: 40, color: Colors.grey),
+                                            )
+                                          : Container( // <-- Bloco para imagem placeholder se a URL estiver vazia
+                                              width: 80.0,
+                                              height: 80.0,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(6.0),
+                                                color: FlutterFlowTheme.of(context).alternate,
+                                              ),
+                                              child: Icon(Icons.fastfood, size: 40, color: FlutterFlowTheme.of(context).secondaryText),
+                                            ),
                                     ),
+                                  ),
                                     Expanded(
                                       child: Padding(
                                         padding: EdgeInsets.only(left: 12.0),

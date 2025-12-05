@@ -7,7 +7,7 @@ import '/flutter_flow/form_field_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
-import 'package:flutter/services.dart'; // Import necessário para TextCapitalization
+import 'package:flutter/services.dart';
 
 import 'editar_produto_model.dart';
 export 'editar_produto_model.dart';
@@ -44,6 +44,11 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
   late FocusNode _descriptionFocusNode;
   late FormFieldController<List<String>> _choiceChipsController;
 
+  // NOVO: Controllers para Estoque
+  late TextEditingController _estoqueController;
+  late FocusNode _estoqueFocusNode;
+
+
   @override
   void initState() {
     super.initState();
@@ -62,9 +67,13 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
     _descriptionController = TextEditingController(text: widget.produto.descricao);
     _descriptionFocusNode = FocusNode();
 
+    // NOVO: Inicializa o campo Estoque com o valor atual do produto
+    _estoqueController = TextEditingController(text: widget.produto.quantidadeEstoque.toString());
+    _estoqueFocusNode = FocusNode();
+
     // Inicialização do ChoiceChipsController com a categoria atual
     _choiceChipsController = FormFieldController<List<String>>(
-      [widget.produto.categoria], // Adicionado fallback para categoria
+      [widget.produto.categoria ?? ''], 
     );
     _model.choiceChipsValue = widget.produto.categoria;
   }
@@ -78,21 +87,28 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
     _precoFocusNode.dispose();
     _descriptionController.dispose();
     _descriptionFocusNode.dispose();
+    _estoqueController.dispose(); // NOVO: Dispose
+    _estoqueFocusNode.dispose(); // NOVO: Dispose
     super.dispose();
   }
 
-  // Lógica de Atualizar Inalterada
+  // Lógica de Atualizar Modificada para incluir Estoque
   Future<void> _atualizarProduto() async {
     setState(() => _isSaving = true);
 
     if (!_model.formKey.currentState!.validate()) {
         setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Preencha todos os campos obrigatórios.")));
         return;
     }
 
     double preco = double.tryParse(
         _precoController.text.replaceAll(',', '.').trim()) ??
         widget.produto.preco;
+
+    // NOVO: Captura e converte Estoque
+    int estoque = int.tryParse(_estoqueController.text) ?? widget.produto.quantidadeEstoque;
+
 
     Produto produtoAtualizado = Produto(
       id: widget.produto.id,
@@ -101,7 +117,7 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
       preco: preco,
       imagemUrl: widget.produto.imagemUrl,
       categoria: _choiceChipsController.value?.firstOrNull ?? widget.produto.categoria,
-      quantidadeEstoque: widget.produto.quantidadeEstoque,
+      quantidadeEstoque: estoque, // <--- VALOR ATUALIZADO
       barracaId: widget.produto.barracaId,
     );
 
@@ -164,9 +180,9 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
   Widget build(BuildContext context) {
     // Decodifica imagem se tiver
     ImageProvider? imagemProvider;
-    if (widget.produto.imagemUrl.isNotEmpty) {
+    if (widget.produto.imagemUrl != null && widget.produto.imagemUrl!.isNotEmpty) {
       try {
-        imagemProvider = MemoryImage(base64Decode(widget.produto.imagemUrl));
+        imagemProvider = MemoryImage(base64Decode(widget.produto.imagemUrl!));
       } catch (e) {
         // Fallback
       }
@@ -216,13 +232,13 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
             ].divide(SizedBox(height: 4)),
           ),
           actions: [
-            // Botão de Excluir (Mantido com Ícone e Ação original)
+            // Botão de Excluir
             IconButton(
               icon: Icon(Icons.delete_outline, color: FlutterFlowTheme.of(context).secondaryText, size: 24),
               onPressed: _deletarProduto,
               tooltip: 'Excluir Produto',
             ),
-            // Botão de Fechar/Voltar (Adicionado para seguir o padrão do CadastroBarraca)
+            // Botão de Fechar/Voltar
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(0, 8, 12, 8),
               child: FlutterFlowIconButton(
@@ -242,7 +258,7 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
               ),
             ),
           ],
-          centerTitle: false, // Alterado para false para alinhar o título
+          centerTitle: false,
           elevation: 0,
         ),
         body: SafeArea(
@@ -261,10 +277,9 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // --- VISUALIZAÇÃO DA IMAGEM ---
-                      // Adaptação da área de upload de imagem para visualização
                       Container(
                         width: double.infinity,
-                        height: 330, // Aumentado para corresponder ao estilo do CadastroBarraca
+                        height: 330,
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).primaryBackground,
                           borderRadius: BorderRadius.circular(12),
@@ -283,7 +298,7 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
                                   children: [
                                     Icon(Icons.image, size: 64, color: FlutterFlowTheme.of(context).secondaryText),
                                     Text('Imagem do Produto', style: FlutterFlowTheme.of(context).bodyMedium.copyWith(color: FlutterFlowTheme.of(context).secondaryText)),
-                                    // Adicione um botão para "Alterar Imagem" aqui se quiser
+                                    // Poderia adicionar um botão de "Mudar Imagem" aqui
                                   ],
                                 ),
                               ) 
@@ -352,7 +367,6 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
                                 return null;
                               },
                               inputFormatters: [
-                                // Adiciona o filtro de capitalização
                                 if (!isAndroid && !isiOS)
                                   TextInputFormatter.withFunction(
                                     (oldValue, newValue) {
@@ -367,66 +381,121 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
                             
                             SizedBox(height: 12),
 
-                            // 2. Campo Preço
-                            TextFormField(
-                              controller: _precoController,
-                              focusNode: _precoFocusNode,
-                              autofocus: true,
-                              keyboardType: TextInputType.number,
-                              obscureText: false,
-                              decoration: InputDecoration(
-                                labelText: 'Preço (R\$)',
-                                labelStyle: FlutterFlowTheme.of(context).labelMedium,
-                                hintText: 'Ex: 10,50',
-                                hintStyle: FlutterFlowTheme.of(context).labelMedium,
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: FlutterFlowTheme.of(context).alternate,
-                                    width: 2,
+                            // --- LINHA DE PREÇO E ESTOQUE (CORRIGIDA) ---
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // PREÇO
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: _precoController,
+                                    focusNode: _precoFocusNode,
+                                    autofocus: true,
+                                    keyboardType: TextInputType.number,
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      labelText: 'Preço (R\$)',
+                                      labelStyle: FlutterFlowTheme.of(context).labelMedium,
+                                      hintStyle: FlutterFlowTheme.of(context).labelMedium,
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: FlutterFlowTheme.of(context).alternate,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: FlutterFlowTheme.of(context).primary,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: FlutterFlowTheme.of(context).error,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: FlutterFlowTheme.of(context).error,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      filled: true,
+                                      fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                      contentPadding: EdgeInsetsDirectional.fromSTEB(16, 20, 16, 20),
+                                    ),
+                                    style: FlutterFlowTheme.of(context).bodyLarge.copyWith(
+                                      letterSpacing: 0.0,
+                                    ),
+                                    validator: (val) {
+                                      if (val == null || val.isEmpty) {
+                                        return 'O preço é obrigatório';
+                                      }
+                                      if (double.tryParse(val.replaceAll(',', '.')) == null) {
+                                        return 'Preço inválido';
+                                      }
+                                      return null;
+                                    },
                                   ),
-                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: FlutterFlowTheme.of(context).primary,
-                                    width: 2,
+                                
+                                SizedBox(width: 12),
+
+                                // ESTOQUE
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: _estoqueController,
+                                    focusNode: _estoqueFocusNode,
+                                    keyboardType: TextInputType.number,
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      labelText: 'Estoque',
+                                      hintText: 'Ex: 50',
+                                      labelStyle: FlutterFlowTheme.of(context).labelLarge,
+                                      hintStyle: FlutterFlowTheme.of(context).labelMedium,
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: FlutterFlowTheme.of(context).alternate, width: 2),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: FlutterFlowTheme.of(context).primary, width: 2),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: FlutterFlowTheme.of(context).error, width: 2),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: FlutterFlowTheme.of(context).error, width: 2),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      filled: true,
+                                      fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                      contentPadding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+                                    ),
+                                    style: FlutterFlowTheme.of(context).bodyLarge,
+                                    validator: (val) {
+                                      if (val == null || val.isEmpty) {
+                                        return 'Estoque é obrigatório';
+                                      }
+                                      if (int.tryParse(val) == null || int.parse(val) < 0) {
+                                        return 'Número inteiro positivo';
+                                      }
+                                      return null;
+                                    },
                                   ),
-                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                errorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: FlutterFlowTheme.of(context).error,
-                                    width: 2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: FlutterFlowTheme.of(context).error,
-                                    width: 2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                filled: true,
-                                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(16, 20, 16, 20),
-                              ),
-                              style: FlutterFlowTheme.of(context).bodyLarge.copyWith(
-                                letterSpacing: 0.0,
-                              ),
-                              validator: (val) {
-                                if (val == null || val.isEmpty) {
-                                  return 'O preço é obrigatório';
-                                }
-                                if (double.tryParse(val.replaceAll(',', '.')) == null) {
-                                  return 'Preço inválido';
-                                }
-                                return null;
-                              },
+                              ],
                             ),
 
                             SizedBox(height: 12),
-                            
+
                             // 3. Choice Chips para Categoria
                             Text(
                               'Categoria do Produto',
@@ -461,11 +530,7 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
                               ),
                               unselectedChipStyle: ChipStyle(
                                 backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-                                textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      font: GoogleFonts.inter(),
-                                      color: FlutterFlowTheme.of(context).secondaryText,
-                                      letterSpacing: 0.0,
-                                    ),
+                                textStyle: FlutterFlowTheme.of(context).bodyMedium.copyWith(color: FlutterFlowTheme.of(context).secondaryText),
                                 iconColor: FlutterFlowTheme.of(context).secondaryText,
                                 elevation: 0,
                                 borderColor: FlutterFlowTheme.of(context).alternate,
@@ -475,19 +540,19 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
                               controller: _choiceChipsController,
                               chipSpacing: 8,
                               rowSpacing: 8,
-                              multiselect: false, // Mantido como single-select
+                              multiselect: false, 
                               alignment: WrapAlignment.start,
                               wrapped: true,
                             ),
 
                             SizedBox(height: 12),
 
-                            // 4. Campo Descrição
-                            TextFormField(
+                            // 4. Campo Descrição (Este estava no lugar do botão, movido para o local correto)
+                             TextFormField(
                               controller: _descriptionController,
                               focusNode: _descriptionFocusNode,
                               autofocus: true,
-                              textCapitalization: TextCapitalization.words,
+                              textCapitalization: TextCapitalization.sentences,
                               obscureText: false,
                               decoration: InputDecoration(
                                 labelText: 'Descrição do Produto...',
@@ -528,7 +593,7 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
                               style: FlutterFlowTheme.of(context).bodyLarge.copyWith(
                                 letterSpacing: 0.0,
                               ),
-                              maxLines: 5, // Ajustado para corresponder ao layout
+                              maxLines: 5, 
                               minLines: 3,
                               validator: (val) {
                                 if (val == null || val.isEmpty) {
@@ -537,7 +602,6 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
                                 return null;
                               },
                               inputFormatters: [
-                                // Adiciona o filtro de capitalização
                                 if (!isAndroid && !isiOS)
                                   TextInputFormatter.withFunction(
                                     (oldValue, newValue) {
@@ -570,6 +634,7 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
                                       font: GoogleFonts.interTight(),
                                       color: Colors.white,
                                       letterSpacing: 0.0,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                 elevation: 3,
                                 borderSide: BorderSide(
@@ -587,9 +652,9 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
                 ),
               ),
             ),
-          ),
         ),
       ),
+    ),
     );
   }
 }

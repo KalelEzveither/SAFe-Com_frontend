@@ -5,7 +5,7 @@ import 'session_service.dart'; // Importante para pegar o ID do utilizador
 
 class CartService {
   // Use o mesmo IP do AuthService
-  static const String _apiBaseUrl = 'http://192.168.0.118:8080/api/carrinho';
+  static const String _apiBaseUrl = 'http://10.0.39.92:8080/api/carrinho';
 
   // Buscar itens do carrinho do utilizador logado
   Future<List<CartItem>> getCartItems() async {

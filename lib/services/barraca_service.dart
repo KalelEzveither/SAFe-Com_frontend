@@ -5,7 +5,7 @@ import '../model/produto_model.dart';
 
 class BarracaService {
   // 1. A Base para no /api
-  static const String _apiBaseUrl = 'http://192.168.0.118:8080/api';
+  static const String _apiBaseUrl = 'http://10.0.39.92:8080/api';
 
   Future<List<Barraca>> getBarracas() async {
     try {

@@ -1,7 +1,6 @@
-import '/flutter_flow/flutter_flow_icon_button.dart';
+import '../barracas_por_categoria/barracas_por_categoria.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/index.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -67,25 +66,6 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                       FlutterFlowTheme.of(context).displaySmall.fontStyle,
                 ),
           ),
-          actions: [
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 12.0, 0.0),
-              child: FlutterFlowIconButton(
-                borderColor: Colors.transparent,
-                borderRadius: 30.0,
-                borderWidth: 1.0,
-                buttonSize: 44.0,
-                icon: Icon(
-                  Icons.shopping_cart_outlined,
-                  color: FlutterFlowTheme.of(context).alternate,
-                  size: 24.0,
-                ),
-                onPressed: () {
-                  print('IconButton pressed ...');
-                },
-              ),
-            ),
-          ],
           centerTitle: false,
           elevation: 0.0,
         ),
@@ -186,9 +166,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                               focusColor: Colors.transparent,
                               hoverColor: Colors.transparent,
                               highlightColor: Colors.transparent,
-                              onTap: () async {
-                                context.pushNamed(
-                                    BarracasHortifrutiWidget.routeName);
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Hortifruti"),
+                                  ),
+                                );
                               },
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -215,10 +199,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                                         focusColor: Colors.transparent,
                                         hoverColor: Colors.transparent,
                                         highlightColor: Colors.transparent,
-                                        onTap: () async {
-                                          context.pushNamed(
-                                              BarracasHortifrutiWidget
-                                                  .routeName);
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Hortifruti"),
+                                            ),
+                                          );
                                         },
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
@@ -315,10 +302,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                                           focusColor: Colors.transparent,
                                           hoverColor: Colors.transparent,
                                           highlightColor: Colors.transparent,
-                                          onTap: () async {
-                                            context.pushNamed(
-                                                BarracasHortifrutiWidget
-                                                    .routeName);
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Hortifruti"),
+                                              ),
+                                            );
                                           },
                                           child: Icon(
                                             Icons.chevron_right_rounded,
@@ -343,8 +333,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                           focusColor: Colors.transparent,
                           hoverColor: Colors.transparent,
                           highlightColor: Colors.transparent,
-                          onTap: () async {
-                            context.pushNamed(BarracasDoceWidget.routeName);
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Doces"),
+                              ),
+                            );
                           },
                           child: Container(
                             width: double.infinity,
@@ -477,10 +472,14 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                                           focusColor: Colors.transparent,
                                           hoverColor: Colors.transparent,
                                           highlightColor: Colors.transparent,
-                                          onTap: () async {
-                                            context.pushNamed(
-                                                BarracasDoceWidget.routeName);
-                                          },
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Doces"),
+                                              ),
+                                            );
+                                          },  
                                           child: Icon(
                                             Icons.chevron_right_rounded,
                                             color: Color(0xFF57636C),
@@ -504,8 +503,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                           focusColor: Colors.transparent,
                           hoverColor: Colors.transparent,
                           highlightColor: Colors.transparent,
-                          onTap: () async {
-                            context.pushNamed(BarracasSalgadosWidget.routeName);
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Salgados"),
+                              ),
+                            );
                           },
                           child: Container(
                             width: double.infinity,
@@ -531,9 +535,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                                 focusColor: Colors.transparent,
                                 hoverColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
-                                onTap: () async {
-                                  context.pushNamed(
-                                      BarracasSalgadosWidget.routeName);
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Salgados"),
+                                    ),
+                                  );
                                 },
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -652,10 +660,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                                             focusColor: Colors.transparent,
                                             hoverColor: Colors.transparent,
                                             highlightColor: Colors.transparent,
-                                            onTap: () async {
-                                              context.pushNamed(
-                                                  BarracasSalgadosWidget
-                                                      .routeName);
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Salgados"),
+                                                ),
+                                              );
                                             },
                                             child: Icon(
                                               Icons.chevron_right_rounded,
@@ -681,9 +692,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                           focusColor: Colors.transparent,
                           hoverColor: Colors.transparent,
                           highlightColor: Colors.transparent,
-                          onTap: () async {
-                            context
-                                .pushNamed(BarracasArtesanatosWidget.routeName);
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Artesanatos"),
+                              ),
+                            );
                           },
                           child: Container(
                             width: double.infinity,
@@ -709,9 +724,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                                 focusColor: Colors.transparent,
                                 hoverColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
-                                onTap: () async {
-                                  context.pushNamed(
-                                      BarracasArtesanatosWidget.routeName);
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Artesanatos"),
+                                    ),
+                                  );
                                 },
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -830,10 +849,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                                             focusColor: Colors.transparent,
                                             hoverColor: Colors.transparent,
                                             highlightColor: Colors.transparent,
-                                            onTap: () async {
-                                              context.pushNamed(
-                                                  BarracasArtesanatosWidget
-                                                      .routeName);
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Artesanatos"),
+                                                ),
+                                              );
                                             },
                                             child: Icon(
                                               Icons.chevron_right_rounded,
@@ -878,9 +900,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                               focusColor: Colors.transparent,
                               hoverColor: Colors.transparent,
                               highlightColor: Colors.transparent,
-                              onTap: () async {
-                                context.pushNamed(
-                                    BarracasTemperosWidget.routeName);
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Temperos"),
+                                  ),
+                                );
                               },
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -907,9 +933,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                                         focusColor: Colors.transparent,
                                         hoverColor: Colors.transparent,
                                         highlightColor: Colors.transparent,
-                                        onTap: () async {
-                                          context.pushNamed(
-                                              BarracasTemperosWidget.routeName);
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Temperos"),
+                                            ),
+                                          );
                                         },
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
@@ -1006,10 +1036,13 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                                           focusColor: Colors.transparent,
                                           hoverColor: Colors.transparent,
                                           highlightColor: Colors.transparent,
-                                          onTap: () async {
-                                            context.pushNamed(
-                                                BarracasTemperosWidget
-                                                    .routeName);
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => BarracasPorCategoriaWidget(categoriaNome: "Temperos"),
+                                              ),
+                                            );
                                           },
                                           child: Icon(
                                             Icons.chevron_right_rounded,

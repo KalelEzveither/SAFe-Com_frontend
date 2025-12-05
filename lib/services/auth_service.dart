@@ -6,7 +6,7 @@ class AuthService {
   // AVISO! Voce deve trocar este IP pelo IPv4 do teu computador!
   // Não uses 'localhost'. Usa o IP da rede (ex: 192.168.0.15)
   // Mantém a porta 8080 e o caminho /api/auth
-  static const String _baseUrl = 'http://192.168.0.118:8080/api/auth';
+  static const String _baseUrl = 'http://10.0.39.92:8080/api/auth';
 
   // --- LOGIN ---
   Future<Map<String, dynamic>?> login(String email, String senha) async {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../model/barraca_model.dart';
+import '../../model/produto_model.dart';
 import '/main.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 
@@ -118,7 +119,14 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: DetalhesProdutoWidget.routeName,
           path: DetalhesProdutoWidget.routePath,
-          builder: (context, params) => DetalhesProdutoWidget(),
+          builder: (context, params) {
+            // Recupera o objeto produto passado no extra
+            final produto = params.state.extraMap['produto'] as Produto;
+            
+            return DetalhesProdutoWidget(
+              produto: produto,
+            );
+          },
         ),
         FFRoute(
           name: CarrinhoWidget.routeName,

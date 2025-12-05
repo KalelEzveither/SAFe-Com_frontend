@@ -67,25 +67,6 @@ class _FiltroBarracasWidgetState extends State<FiltroBarracasWidget> {
                       FlutterFlowTheme.of(context).displaySmall.fontStyle,
                 ),
           ),
-          actions: [
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 12.0, 0.0),
-              child: FlutterFlowIconButton(
-                borderColor: Colors.transparent,
-                borderRadius: 30.0,
-                borderWidth: 1.0,
-                buttonSize: 44.0,
-                icon: Icon(
-                  Icons.shopping_cart_outlined,
-                  color: FlutterFlowTheme.of(context).alternate,
-                  size: 24.0,
-                ),
-                onPressed: () {
-                  print('IconButton pressed ...');
-                },
-              ),
-            ),
-          ],
           centerTitle: false,
           elevation: 0.0,
         ),

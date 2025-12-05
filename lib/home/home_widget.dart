@@ -1,3 +1,5 @@
+import '../carrinho/carrinho_widget.dart';
+import '../flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +108,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                     ),
               ),
               Text(
-                'Lista de barracas',
+                'Dashboard',
                 style: FlutterFlowTheme.of(context).headlineMedium.override(
                       font: GoogleFonts.interTight(
                         fontWeight: FlutterFlowTheme.of(context)
@@ -129,11 +131,22 @@ class _HomeWidgetState extends State<HomeWidget> {
           ),
           actions: [
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 20.0, 0.0),
-              child: Icon(
-                Icons.shopping_cart_outlined,
-                color: Colors.white,
-                size: 24.0,
+              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 12.0, 0.0), // Ajustei para 12 pois o botão já tem margem interna
+              child: FlutterFlowIconButton(
+                borderColor: Colors.transparent,
+                borderRadius: 30.0,
+                borderWidth: 1.0,
+                buttonSize: 44.0, // Tamanho da área de toque (bom para UX)
+                fillColor: Colors.transparent, // Fundo transparente
+                icon: Icon(
+                  Icons.shopping_cart_outlined,
+                  color: Colors.white, // Mantendo sua cor original
+                  size: 24.0,
+                ),
+                onPressed: () async {
+                  // Navega para a tela do Carrinho
+                  context.pushNamed(CarrinhoWidget.routeName);
+                },
               ),
             ),
           ],

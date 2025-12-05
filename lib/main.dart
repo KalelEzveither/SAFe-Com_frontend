@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'index.dart';
+import 'services/session_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -99,33 +100,96 @@ class NavBarPage extends StatefulWidget {
   _NavBarPageState createState() => _NavBarPageState();
 }
 
-/// This is the private State class that goes with NavBarPage.
 class _NavBarPageState extends State<NavBarPage> {
   String _currentPageName = 'FiltroBarracas';
   late Widget? _currentPage;
+  
+  // Variável para controlar se mostramos a aba do vendedor
+  bool _isVendedor = false;
 
   @override
   void initState() {
     super.initState();
     _currentPageName = widget.initialPage ?? _currentPageName;
     _currentPage = widget.page;
+    
+    // Verifica o tipo do usuário ao iniciar
+    _checkUserType();
+  }
+
+  // Função que busca no SessionService
+  Future<void> _checkUserType() async {
+    final user = await SessionService.getUser();
+    if (user != null && user['tipo'] == 'VENDEDOR') {
+      setState(() {
+        _isVendedor = true;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final tabs = {
+    // 1. Dicionário de Abas (Comuns a todos)
+    final Map<String, Widget> tabs = {
       'FiltroBarracas': FiltroBarracasWidget(),
-      'Perfil': PerfilWidget(),
       'Home': HomeWidget(),
-      'detalhes_Barraca': MeusProdutosWidget(),
+      'Perfil': PerfilWidget(),
     };
+
+    // 2. Lista de Ícones (Comuns a todos)
+    final List<BottomNavigationBarItem> items = [
+      BottomNavigationBarItem(
+        icon: FaIcon(
+          FontAwesomeIcons.sistrix,
+          size: 24.0,
+        ),
+        label: 'Busca',
+        tooltip: '',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(
+          Icons.home_outlined,
+          size: 24.0,
+        ),
+        label: 'Home',
+        tooltip: '',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(
+          Icons.person_outline,
+          size: 24.0,
+        ),
+        label: 'Perfil',
+        tooltip: '',
+      ),
+    ];
+
+    // 3. SE FOR VENDEDOR: Adiciona a aba e o ícone extra
+    if (_isVendedor) {
+      // Adiciona a rota da tela "Meus Produtos" (Dashboard)
+      tabs['MeusProdutos'] = MeusProdutosWidget();
+
+      // Adiciona o ícone da lojinha
+      items.add(
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.storefront_sharp, // Ícone de loja
+            size: 24.0,
+          ),
+          label: 'Minha Loja',
+          tooltip: '',
+        ),
+      );
+    }
+
     final currentIndex = tabs.keys.toList().indexOf(_currentPageName);
 
     return Scaffold(
       resizeToAvoidBottomInset: !widget.disableResizeToAvoidBottomInset,
       body: _currentPage ?? tabs[_currentPageName],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+        // Proteção para não quebrar se o index for -1 (página fora da nav)
+        currentIndex: currentIndex != -1 ? currentIndex : 0, 
         onTap: (i) => safeSetState(() {
           _currentPage = null;
           _currentPageName = tabs.keys.toList()[i];
@@ -136,40 +200,7 @@ class _NavBarPageState extends State<NavBarPage> {
         showSelectedLabels: false,
         showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: FaIcon(
-              FontAwesomeIcons.sistrix,
-              size: 24.0,
-            ),
-            label: 'Home',
-            tooltip: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person_outline,
-              size: 24.0,
-            ),
-            label: 'Home',
-            tooltip: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home_outlined,
-              size: 24.0,
-            ),
-            label: 'Home',
-            tooltip: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.storefront_sharp,
-              size: 24.0,
-            ),
-            label: 'Barrac',
-            tooltip: '',
-          )
-        ],
+        items: items, // Passa a lista dinâmica
       ),
     );
   }

@@ -120,7 +120,7 @@ class _CadastroBarracaWidgetState extends State<CadastroBarracaWidget> {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(alertDialogContext);
-                    context.goNamed('Login'); // Vai para Login
+                    context.goNamed('login'); // Vai para Login
                   },
                   child: Text('Ok'),
                 ),

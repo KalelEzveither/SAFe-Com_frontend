@@ -1,6 +1,5 @@
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/form_field_controller.dart';
-import '/flutter_flow/upload_data.dart'; // <--- VERIFIQUE SE TEM ESSE IMPORT
 import 'package:flutter/material.dart';
 
 import 'editar_produto_widget.dart';

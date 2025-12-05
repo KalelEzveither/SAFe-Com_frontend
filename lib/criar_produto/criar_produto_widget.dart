@@ -54,9 +54,6 @@ class _CriarProdutoWidgetState extends State<CriarProdutoWidget> {
 
     _model.priceTextController ??= TextEditingController();
     _model.priceFocusNode ??= FocusNode();
-
-    _model.stockTextController ??= TextEditingController();
-    _model.stockFocusNode ??= FocusNode();
   }
 
   @override
@@ -85,8 +82,8 @@ class _CriarProdutoWidgetState extends State<CriarProdutoWidget> {
     try {
       // 1. Converte Imagem para Base64
       String imagemBase64 = '';
-      if (_model.uploadedLocalFile_imagemProd != null && _model.uploadedLocalFile_imagemProd!.bytes != null) {
-        imagemBase64 = base64Encode(_model.uploadedLocalFile_imagemProd!.bytes!);
+      if (_model.uploadedLocalFile_imagemProd != null && _model.uploadedLocalFile_imagemProd.bytes != null) {
+        imagemBase64 = base64Encode(_model.uploadedLocalFile_imagemProd.bytes!);
       }
 
       // 2. Converte Preço
@@ -218,10 +215,10 @@ class _CriarProdutoWidgetState extends State<CriarProdutoWidget> {
                                   color: FlutterFlowTheme.of(context).alternate,
                                   width: 2,
                                 ),
-                                image: _model.uploadedLocalFile_imagemProd != null && _model.uploadedLocalFile_imagemProd!.bytes != null
+                                image: _model.uploadedLocalFile_imagemProd != null && _model.uploadedLocalFile_imagemProd.bytes != null
                                     ? DecorationImage(
                                         fit: BoxFit.cover,
-                                        image: MemoryImage(_model.uploadedLocalFile_imagemProd!.bytes!)
+                                        image: MemoryImage(_model.uploadedLocalFile_imagemProd.bytes!)
                                       )
                                     : null,
                               ),
@@ -255,7 +252,7 @@ class _CriarProdutoWidgetState extends State<CriarProdutoWidget> {
                                     }
                                   }
                                 },
-                                child: _model.uploadedLocalFile_imagemProd != null && _model.uploadedLocalFile_imagemProd!.bytes != null
+                                child: _model.uploadedLocalFile_imagemProd != null && _model.uploadedLocalFile_imagemProd.bytes != null
                                     ? Container() // Se tiver imagem, não mostra o placeholder
                                     : Column(
                                         mainAxisAlignment: MainAxisAlignment.center,

@@ -7,9 +7,6 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/upload_data.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http; // ADICIONE http ao pubspec.yaml se não tiver
 import 'cadastro_barraca_model.dart';
 export 'cadastro_barraca_model.dart';

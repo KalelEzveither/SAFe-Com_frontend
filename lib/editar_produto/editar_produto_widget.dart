@@ -166,7 +166,7 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
     ImageProvider? imagemProvider;
     if (widget.produto.imagemUrl.isNotEmpty) {
       try {
-        imagemProvider = MemoryImage(base64Decode(widget.produto.imagemUrl!));
+        imagemProvider = MemoryImage(base64Decode(widget.produto.imagemUrl));
       } catch (e) {
         // Fallback
       }

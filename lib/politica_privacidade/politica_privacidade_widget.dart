@@ -636,6 +636,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget> {
                                             .aceitoCondicoesValue = newValue!);
                                       },
                                       side: (FlutterFlowTheme.of(context)
+                                                  // ignore: unnecessary_null_comparison
                                                   .alternate !=
                                               null)
                                           ? BorderSide(

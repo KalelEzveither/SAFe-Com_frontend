@@ -6,14 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'meus_produtos_model.dart';
 
-// Imports do Backend
 import '../services/barraca_service.dart';
 import '../services/session_service.dart';
 import '../model/barraca_model.dart';
 import '../model/produto_model.dart';
 import '../criar_produto/criar_produto_widget.dart';
-import '../editar_produto/editar_produto_widget.dart';
-// Import da gestão de reservas se quiser o link direto
 import '../gestao_reservas/gestao_reservas_widget.dart';
 
 export 'meus_produtos_model.dart';

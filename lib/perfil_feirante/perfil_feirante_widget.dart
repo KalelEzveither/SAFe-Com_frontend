@@ -1,3 +1,4 @@
+import '../services/session_service.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -20,12 +21,29 @@ class PerfilFeiranteWidget extends StatefulWidget {
 class _PerfilFeiranteWidgetState extends State<PerfilFeiranteWidget> {
   late PerfilFeiranteModel _model;
 
+  String _nomeUsuario = "";
+  String _emailUsuario = "";
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => PerfilFeiranteModel());
+    _carregarUsuario();
+  }
+
+  void _carregarUsuario() async {
+    // Chama seu serviço existente para pegar o usuário
+    final userData = await SessionService.getUser();
+
+    // Verifica se veio dados e se tem o campo 'nome'
+    if (userData != null && userData.containsKey('nome')) {
+      setState(() {
+        _nomeUsuario = userData['nome']; // Atualiza a variável da tela
+        _emailUsuario = userData['email'];
+      });
+    }
   }
 
   @override
@@ -138,7 +156,7 @@ class _PerfilFeiranteWidgetState extends State<PerfilFeiranteWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Fulano de tal',
+                                  '$_nomeUsuario',
                                   style: FlutterFlowTheme.of(context)
                                       .headlineSmall
                                       .override(
@@ -165,7 +183,7 @@ class _PerfilFeiranteWidgetState extends State<PerfilFeiranteWidget> {
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       0.0, 4.0, 0.0, 0.0),
                                   child: Text(
-                                    'fulaninho@gmail.com',
+                                    '$_emailUsuario',
                                     style: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -401,7 +419,7 @@ class _PerfilFeiranteWidgetState extends State<PerfilFeiranteWidget> {
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   12.0, 0.0, 0.0, 0.0),
                               child: Text(
-                                'Editar Perfi',
+                                'Editar Perfil',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyLarge
                                     .override(

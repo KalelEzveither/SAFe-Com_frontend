@@ -46,4 +46,23 @@ class BarracaService {
       return [];
     }
   }
+  
+  Future<Barraca?> getBarracaPeloUsuario(int usuarioId) async {
+    try {
+      // Chama o endpoint que criamos no Java: /api/barracas/usuario/{id}
+      final url = Uri.parse('$_apiBaseUrl/barracas/usuario/$usuarioId');
+      
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return Barraca.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+      } else {
+        // 404 Not Found (Usuário ainda não criou barraca)
+        return null;
+      }
+    } catch (e) {
+      print('Erro ao buscar barraca do usuário: $e');
+      return null;
+    }
+  }
 }

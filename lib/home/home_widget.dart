@@ -27,6 +27,8 @@ class _HomeWidgetState extends State<HomeWidget> {
   late HomeModel _model;
 
   List<Barraca> _listaBarracas = [];
+  List<Barraca> _listaFiltrada = [];
+
   bool _isLoading = true;
   final BarracaService _barracaService = BarracaService();
 
@@ -62,8 +64,28 @@ class _HomeWidgetState extends State<HomeWidget> {
     var barracas = await _barracaService.getBarracas();
     setState(() {
       _listaBarracas = barracas;
+      _listaFiltrada = barracas;
       _isLoading = false;
     });
+  }
+
+  // --- LÓGICA DE FILTRO ---
+  void _filtrarBarracas(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        _listaFiltrada = _listaBarracas;
+      });
+    } else {
+      setState(() {
+        _listaFiltrada = _listaBarracas.where((barraca) {
+          final nome = barraca.nome.toLowerCase();
+          final desc = barraca.descricao.toLowerCase();
+          final input = query.toLowerCase();
+          
+          return nome.contains(input) || desc.contains(input);
+        }).toList();
+      });
+    }
   }
 
   @override
@@ -162,72 +184,18 @@ class _HomeWidgetState extends State<HomeWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding:
-                      EdgeInsetsDirectional.fromSTEB(16.0, 4.0, 16.0, 12.0),
+                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 4.0, 16.0, 12.0),
                   child: TextFormField(
                     controller: _model.textController,
                     focusNode: _model.textFieldFocusNode,
                     autofocus: false,
                     textCapitalization: TextCapitalization.sentences,
                     obscureText: false,
+                    onChanged: (value) => _filtrarBarracas(value), 
                     decoration: InputDecoration(
                       labelText: 'Encontre barracas...',
-                      labelStyle:
-                          FlutterFlowTheme.of(context).labelMedium.override(
-                                font: GoogleFonts.inter(
-                                  fontWeight: FlutterFlowTheme.of(context)
-                                      .labelMedium
-                                      .fontWeight,
-                                  fontStyle: FlutterFlowTheme.of(context)
-                                      .labelMedium
-                                      .fontStyle,
-                                ),
-                                letterSpacing: 0.0,
-                                fontWeight: FlutterFlowTheme.of(context)
-                                    .labelMedium
-                                    .fontWeight,
-                                fontStyle: FlutterFlowTheme.of(context)
-                                    .labelMedium
-                                    .fontStyle,
-                              ),
-                      hintStyle:
-                          FlutterFlowTheme.of(context).labelMedium.override(
-                                font: GoogleFonts.inter(
-                                  fontWeight: FlutterFlowTheme.of(context)
-                                      .labelMedium
-                                      .fontWeight,
-                                  fontStyle: FlutterFlowTheme.of(context)
-                                      .labelMedium
-                                      .fontStyle,
-                                ),
-                                letterSpacing: 0.0,
-                                fontWeight: FlutterFlowTheme.of(context)
-                                    .labelMedium
-                                    .fontWeight,
-                                fontStyle: FlutterFlowTheme.of(context)
-                                    .labelMedium
-                                    .fontStyle,
-                              ),
-                      errorStyle:
-                          FlutterFlowTheme.of(context).bodyMedium.override(
-                                font: GoogleFonts.inter(
-                                  fontWeight: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .fontWeight,
-                                  fontStyle: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .fontStyle,
-                                ),
-                                color: FlutterFlowTheme.of(context).error,
-                                fontSize: 12.0,
-                                letterSpacing: 0.0,
-                                fontWeight: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .fontWeight,
-                                fontStyle: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .fontStyle,
-                              ),
+                      labelStyle: FlutterFlowTheme.of(context).labelMedium,
+                      hintStyle: FlutterFlowTheme.of(context).labelMedium,
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: FlutterFlowTheme.of(context).alternate,
@@ -238,20 +206,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: FlutterFlowTheme.of(context).primary,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.of(context).error,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.of(context).error,
                           width: 1.0,
                         ),
                         borderRadius: BorderRadius.circular(8.0),
@@ -268,46 +222,15 @@ class _HomeWidgetState extends State<HomeWidget> {
                         size: 24.0,
                       ),
                     ),
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          font: GoogleFonts.inter(
-                            fontWeight: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontWeight,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontStyle,
-                          ),
-                          letterSpacing: 0.0,
-                          fontWeight: FlutterFlowTheme.of(context)
-                              .bodyMedium
-                              .fontWeight,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                        ),
+                    style: FlutterFlowTheme.of(context).bodyMedium,
                     cursorColor: FlutterFlowTheme.of(context).primary,
-                    validator:
-                        _model.textControllerValidator.asValidator(context),
-                    inputFormatters: [
-                      if (!isAndroid && !isiOS)
-                        TextInputFormatter.withFunction((oldValue, newValue) {
-                          return TextEditingValue(
-                            selection: newValue.selection,
-                            text: newValue.text
-                                .toCapitalization(TextCapitalization.sentences),
-                          );
-                        }),
-                    ],
                   ),
                 ),
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 0.0, 0.0),
                   child: Text(
                     'Barracas mais acessadas',
-                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                          font: GoogleFonts.inter(
-                            fontWeight: FlutterFlowTheme.of(context).bodyLarge.fontWeight,
-                          ),
-                        ),
+                    style: FlutterFlowTheme.of(context).bodyLarge,
                   ),
                 ),
 
@@ -315,8 +238,8 @@ class _HomeWidgetState extends State<HomeWidget> {
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
                   child: _isLoading
-                      ? Center(child: CircularProgressIndicator()) // Loading...
-                      : _listaBarracas.isEmpty
+                      ? Center(child: CircularProgressIndicator(color: Color(0xFF156F00)))
+                      : _listaFiltrada.isEmpty // Verifica a lista filtrada, não a original
                           ? Center(child: Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: Text("Nenhuma barraca encontrada."),
@@ -326,17 +249,16 @@ class _HomeWidgetState extends State<HomeWidget> {
                               primary: false,
                               shrinkWrap: true,
                               scrollDirection: Axis.vertical,
-                              itemCount: _listaBarracas.length,
+                              itemCount: _listaFiltrada.length, // Usa a lista filtrada
                               itemBuilder: (context, index) {
-                                final barraca = _listaBarracas[index];
+                                final barraca = _listaFiltrada[index]; // Usa a lista filtrada
 
                                 return Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(16.0, 4.0, 16.0, 12.0),
                                   child: InkWell(
                                     onTap: () {
-                                      // Navegação para Detalhes
                                       context.pushNamed(
-                                        'detalhes_Barraca', // Confirme se o nome da rota é esse no main.dart
+                                        'detalhes_Barraca', 
                                         extra: { "barraca": barraca },
                                       );
                                     },
@@ -354,7 +276,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                         mainAxisSize: MainAxisSize.max,
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          // --- IMAGEM DA BARRACA (Base64) ---
+                                          // IMAGEM
                                           ClipRRect(
                                             borderRadius: BorderRadius.only(
                                               topLeft: Radius.circular(8.0),
@@ -377,14 +299,13 @@ class _HomeWidgetState extends State<HomeWidget> {
                                                   ),
                                           ),
                                           
-                                          // --- TEXTOS ---
+                                          // TEXTOS
                                           Padding(
                                             padding: EdgeInsets.all(12.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                // Status (Substituindo o "Barraca 3")
                                                 Text(
                                                   barraca.isAberta ? 'Aberto' : 'Fechado',
                                                   style: FlutterFlowTheme.of(context).labelSmall.override(
@@ -393,21 +314,15 @@ class _HomeWidgetState extends State<HomeWidget> {
                                                         fontWeight: FontWeight.bold,
                                                       ),
                                                 ),
-                                                // Nome da Barraca (Estilo Headline)
                                                 Text(
                                                   barraca.nome,
-                                                  style: FlutterFlowTheme.of(context).headlineMedium.override(
-                                                        font: GoogleFonts.interTight(),
-                                                      ),
+                                                  style: FlutterFlowTheme.of(context).headlineMedium,
                                                 ),
-                                                // Descrição (Estilo LabelSmall)
                                                 Text(
                                                   barraca.descricao,
                                                   maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis, // Três pontinhos se for grande
-                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                        font: GoogleFonts.inter(),
-                                                      ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: FlutterFlowTheme.of(context).labelSmall,
                                                 ),
                                               ].divide(SizedBox(height: 4.0)),
                                             ),

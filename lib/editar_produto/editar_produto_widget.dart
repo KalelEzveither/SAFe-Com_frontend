@@ -4,16 +4,24 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart'; // Import necessário para TextCapitalization
+
 import 'editar_produto_model.dart';
 export 'editar_produto_model.dart';
 
-///
-///
+import '../model/produto_model.dart'; 
+import '../services/produto_service.dart';
+
 class EditarProdutoWidget extends StatefulWidget {
-  const EditarProdutoWidget({super.key});
+  final Produto produto; // Recebe o produto para editar
+
+  const EditarProdutoWidget({
+    super.key,
+    required this.produto,
+  });
 
   static String routeName = 'editar_Produto';
   static String routePath = '/editarProduto';
@@ -24,33 +32,146 @@ class EditarProdutoWidget extends StatefulWidget {
 
 class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
   late EditarProdutoModel _model;
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _isSaving = false;
+
+  // Variáveis para corresponder ao estilo do CadastroBarracaWidget
+  late TextEditingController _nomeController;
+  late FocusNode _nomeFocusNode;
+  late TextEditingController _precoController;
+  late FocusNode _precoFocusNode;
+  late TextEditingController _descriptionController;
+  late FocusNode _descriptionFocusNode;
+  late FormFieldController<List<String>> _choiceChipsController;
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => EditarProdutoModel());
 
-    _model.textController1 ??= TextEditingController(text: 'Nome do produto');
-    _model.textFieldFocusNode1 ??= FocusNode();
+    // Inicialização dos TextControllers e FocusNodes
+    _nomeController = TextEditingController(text: widget.produto.nome);
+    _nomeFocusNode = FocusNode();
+    
+    // Inicialização do campo Preço
+    _precoController = TextEditingController(
+        text: widget.produto.preco.toStringAsFixed(2).replaceAll('.', ','));
+    _precoFocusNode = FocusNode();
 
-    _model.textController2 ??= TextEditingController(text: '8,50');
-    _model.textFieldFocusNode2 ??= FocusNode();
+    // Inicialização do campo Descrição
+    _descriptionController = TextEditingController(text: widget.produto.descricao);
+    _descriptionFocusNode = FocusNode();
 
-    _model.textController3 ??= TextEditingController(text: 'betano betardes');
-    _model.textFieldFocusNode3 ??= FocusNode();
+    // Inicialização do ChoiceChipsController com a categoria atual
+    _choiceChipsController = FormFieldController<List<String>>(
+      [widget.produto.categoria], // Adicionado fallback para categoria
+    );
+    _model.choiceChipsValue = widget.produto.categoria;
   }
 
   @override
   void dispose() {
     _model.dispose();
-
+    _nomeController.dispose();
+    _nomeFocusNode.dispose();
+    _precoController.dispose();
+    _precoFocusNode.dispose();
+    _descriptionController.dispose();
+    _descriptionFocusNode.dispose();
     super.dispose();
+  }
+
+  // Lógica de Atualizar Inalterada
+  Future<void> _atualizarProduto() async {
+    setState(() => _isSaving = true);
+
+    if (!_model.formKey.currentState!.validate()) {
+        setState(() => _isSaving = false);
+        return;
+    }
+
+    double preco = double.tryParse(
+        _precoController.text.replaceAll(',', '.').trim()) ??
+        widget.produto.preco;
+
+    Produto produtoAtualizado = Produto(
+      id: widget.produto.id,
+      nome: _nomeController.text,
+      descricao: _descriptionController.text,
+      preco: preco,
+      imagemUrl: widget.produto.imagemUrl,
+      categoria: _choiceChipsController.value?.firstOrNull ?? widget.produto.categoria,
+      quantidadeEstoque: widget.produto.quantidadeEstoque,
+      barracaId: widget.produto.barracaId,
+    );
+
+    // Simulação do Serviço (mantenha a sua lógica real aqui)
+    bool sucesso = await ProdutoService().atualizarProduto(produtoAtualizado);
+
+    if (mounted) {
+      setState(() => _isSaving = false);
+      if (sucesso) {
+        // Usa o FlutterFlowTheme para cores
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Atualizado com sucesso!"),
+          backgroundColor: FlutterFlowTheme.of(context).primary, // Cor verde/primária
+        ));
+        context.safePop();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Erro ao atualizar."),
+          backgroundColor: FlutterFlowTheme.of(context).error, // Cor de erro
+        ));
+      }
+    }
+  }
+
+  // Lógica de Deletar Inalterada
+  Future<void> _deletarProduto() async {
+    var confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Excluir Produto"),
+        content: Text("Tem certeza que deseja remover este item?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text("Cancelar", style: TextStyle(color: FlutterFlowTheme.of(context).primaryText)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text("Excluir", style: TextStyle(color: FlutterFlowTheme.of(context).error)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      // Simulação do Serviço (mantenha a sua lógica real aqui)
+      bool sucesso = await ProdutoService().deletarProduto(widget.produto.id);
+      if (sucesso && mounted) {
+        context.safePop();
+      } else if (mounted) {
+         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Erro ao excluir."),
+          backgroundColor: FlutterFlowTheme.of(context).error,
+        ));
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Decodifica imagem se tiver
+    ImageProvider? imagemProvider;
+    if (widget.produto.imagemUrl.isNotEmpty) {
+      try {
+        imagemProvider = MemoryImage(base64Decode(widget.produto.imagemUrl!));
+      } catch (e) {
+        // Fallback
+      }
+    }
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -58,638 +179,412 @@ class _EditarProdutoWidgetState extends State<EditarProdutoWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
+        // Cor de fundo copiada do CadastroBarracaWidget
+        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground, 
         appBar: AppBar(
-          backgroundColor: Color(0xFF156F00),
+          // Cor de fundo copiada do CadastroBarracaWidget
+          backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
           automaticallyImplyLeading: false,
-          leading: FlutterFlowIconButton(
-            borderColor: Colors.transparent,
-            borderRadius: 25.0,
-            borderWidth: 1.0,
-            buttonSize: 50.0,
-            icon: Icon(
-              Icons.arrow_back_rounded,
-              color: Colors.white,
-              size: 24.0,
-            ),
-            onPressed: () async {
-              context.safePop();
-            },
-          ),
-          title: Text(
-            'Editar Produto',
-            style: FlutterFlowTheme.of(context).titleLarge.override(
-                  font: GoogleFonts.readexPro(
-                    fontWeight: FontWeight.w600,
-                    fontStyle:
-                        FlutterFlowTheme.of(context).titleLarge.fontStyle,
-                  ),
-                  color: Colors.white,
-                  fontSize: 22.0,
-                  letterSpacing: 0.0,
-                  fontWeight: FontWeight.w600,
-                  fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
-                ),
+          title: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Editar Produto', // Título alterado
+                style: FlutterFlowTheme.of(context).headlineMedium.override(
+                      font: GoogleFonts.interTight(
+                        fontWeight: FlutterFlowTheme.of(context).headlineMedium.fontWeight,
+                        fontStyle: FlutterFlowTheme.of(context).headlineMedium.fontStyle,
+                      ),
+                      letterSpacing: 0.0,
+                      fontWeight: FlutterFlowTheme.of(context).headlineMedium.fontWeight,
+                      fontStyle: FlutterFlowTheme.of(context).headlineMedium.fontStyle,
+                    ),
+              ),
+              Text(
+                'Altere as informações do seu produto', // Subtítulo alterado
+                style: FlutterFlowTheme.of(context).labelMedium.override(
+                      font: GoogleFonts.inter(
+                        fontWeight: FlutterFlowTheme.of(context).labelMedium.fontWeight,
+                        fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
+                      ),
+                      letterSpacing: 0.0,
+                      fontWeight: FlutterFlowTheme.of(context).labelMedium.fontWeight,
+                      fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
+                    ),
+              ),
+            ].divide(SizedBox(height: 4)),
           ),
           actions: [
+            // Botão de Excluir (Mantido com Ícone e Ação original)
+            IconButton(
+              icon: Icon(Icons.delete_outline, color: FlutterFlowTheme.of(context).secondaryText, size: 24),
+              onPressed: _deletarProduto,
+              tooltip: 'Excluir Produto',
+            ),
+            // Botão de Fechar/Voltar (Adicionado para seguir o padrão do CadastroBarraca)
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+              padding: EdgeInsetsDirectional.fromSTEB(0, 8, 12, 8),
               child: FlutterFlowIconButton(
-                borderColor: Colors.transparent,
-                borderRadius: 25.0,
-                borderWidth: 1.0,
-                buttonSize: 50.0,
-                fillColor: Color(0xFFFF5963),
+                borderColor: FlutterFlowTheme.of(context).alternate,
+                borderRadius: 12,
+                borderWidth: 1,
+                buttonSize: 40,
+                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
                 icon: Icon(
-                  Icons.delete_outline,
-                  color: Color(0xFFF1F4F8),
-                  size: 20.0,
+                  Icons.close_rounded,
+                  color: Color(0xFF156F00),
+                  size: 24,
                 ),
-                onPressed: () {
-                  print('IconButton pressed ...');
+                onPressed: () async {
+                  context.safePop();
                 },
               ),
             ),
           ],
-          centerTitle: true,
-          elevation: 0.0,
+          centerTitle: false, // Alterado para false para alinhar o título
+          elevation: 0,
         ),
         body: SafeArea(
           top: true,
-          child: Padding(
-            padding: EdgeInsets.all(24.0),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 200.0,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.0),
-                      border: Border.all(
-                        color: Color(0xFFE0E3E7),
-                        width: 2.0,
-                      ),
-                    ),
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: AlignmentDirectional(0.0, 0.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.0),
-                            child: CachedNetworkImage(
-                              fadeInDuration: Duration(milliseconds: 0),
-                              fadeOutDuration: Duration(milliseconds: 0),
-                              imageUrl:
-                                  'https://images.unsplash.com/photo-1636996948902-bc51a888442d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTYyMDF8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NjQ2MTY0Njd8&ixlib=rb-4.1.0&q=80&w=1080',
-                              width: double.infinity,
-                              height: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Color(0x80000000),
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.camera_alt_outlined,
-                                  color: Color(0xFFF1F4F8),
-                                  size: 48.0,
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0.0, 8.0, 0.0, 0.0),
-                                  child: Text(
-                                    'Alterar Foto',
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          font: GoogleFonts.readexPro(
-                                            fontWeight: FontWeight.w500,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontStyle,
-                                          ),
-                                          color: Color(0xFFF1F4F8),
-                                          fontSize: 14.0,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.w500,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Form(
-                    key: _model.formKey,
-                    autovalidateMode: AutovalidateMode.disabled,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Nome do Produto',
-                              style: FlutterFlowTheme.of(context)
-                                  .labelLarge
-                                  .override(
-                                    font: GoogleFonts.readexPro(
-                                      fontWeight: FontWeight.w600,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .labelLarge
-                                          .fontStyle,
-                                    ),
-                                    color: Color(0xFF57636C),
-                                    fontSize: 16.0,
-                                    letterSpacing: 0.0,
-                                    fontWeight: FontWeight.w600,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .labelLarge
-                                        .fontStyle,
-                                  ),
-                            ),
-                            TextFormField(
-                              controller: _model.textController1,
-                              focusNode: _model.textFieldFocusNode1,
-                              autofocus: false,
-                              textInputAction: TextInputAction.next,
-                              obscureText: false,
-                              decoration: InputDecoration(
-                                hintText: 'Digite o nome do produto',
-                                hintStyle: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      font: GoogleFonts.readexPro(
-                                        fontWeight: FontWeight.normal,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                      color: Color(0xFF14181B),
-                                      fontSize: 14.0,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.white,
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0x00000000),
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0x00000000),
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0x00000000),
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                filled: true,
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(
-                                    16.0, 12.0, 16.0, 12.0),
-                              ),
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    font: GoogleFonts.readexPro(
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                    color: Color(0xFF14181B),
-                                    fontSize: 16.0,
-                                    letterSpacing: 0.0,
-                                    fontWeight: FontWeight.normal,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontStyle,
-                                  ),
-                              cursorColor: Color(0xFF19DB8A),
-                              validator: _model.textController1Validator
-                                  .asValidator(context),
-                            ),
-                          ].divide(SizedBox(height: 8.0)),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Categoria',
-                              style: FlutterFlowTheme.of(context)
-                                  .labelLarge
-                                  .override(
-                                    font: GoogleFonts.readexPro(
-                                      fontWeight: FontWeight.w600,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .labelLarge
-                                          .fontStyle,
-                                    ),
-                                    color: Color(0xFF57636C),
-                                    fontSize: 16.0,
-                                    letterSpacing: 0.0,
-                                    fontWeight: FontWeight.w600,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .labelLarge
-                                        .fontStyle,
-                                  ),
-                            ),
-                            FlutterFlowChoiceChips(
-                              options: [
-                                ChipData('Hortifruti'),
-                                ChipData('Doces'),
-                                ChipData('Temperos'),
-                                ChipData('Artesanato'),
-                                ChipData('Salgados')
-                              ],
-                              onChanged: (val) => safeSetState(() =>
-                                  _model.choiceChipsValue = val?.firstOrNull),
-                              selectedChipStyle: ChipStyle(
-                                backgroundColor:
-                                    FlutterFlowTheme.of(context).accent2,
-                                textStyle: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      font: GoogleFonts.inter(
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryText,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                iconColor:
-                                    FlutterFlowTheme.of(context).primaryText,
-                                iconSize: 18.0,
-                                elevation: 0.0,
-                                borderColor:
-                                    FlutterFlowTheme.of(context).secondary,
-                                borderWidth: 2.0,
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              unselectedChipStyle: ChipStyle(
-                                backgroundColor: FlutterFlowTheme.of(context)
-                                    .primaryBackground,
-                                textStyle: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      font: GoogleFonts.inter(
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryText,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                iconColor:
-                                    FlutterFlowTheme.of(context).secondaryText,
-                                iconSize: 18.0,
-                                elevation: 0.0,
-                                borderColor:
-                                    FlutterFlowTheme.of(context).alternate,
-                                borderWidth: 2.0,
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              chipSpacing: 8.0,
-                              rowSpacing: 8.0,
-                              multiselect: false,
-                              alignment: WrapAlignment.start,
-                              controller: _model.choiceChipsValueController ??=
-                                  FormFieldController<List<String>>(
-                                [],
-                              ),
-                              wrapped: true,
-                            ),
-                          ].divide(SizedBox(height: 8.0)),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Preço (R\$)',
-                              style: FlutterFlowTheme.of(context)
-                                  .labelLarge
-                                  .override(
-                                    font: GoogleFonts.readexPro(
-                                      fontWeight: FontWeight.w600,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .labelLarge
-                                          .fontStyle,
-                                    ),
-                                    color: Color(0xFF57636C),
-                                    fontSize: 16.0,
-                                    letterSpacing: 0.0,
-                                    fontWeight: FontWeight.w600,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .labelLarge
-                                        .fontStyle,
-                                  ),
-                            ),
-                            TextFormField(
-                              controller: _model.textController2,
-                              focusNode: _model.textFieldFocusNode2,
-                              autofocus: false,
-                              textInputAction: TextInputAction.next,
-                              obscureText: false,
-                              decoration: InputDecoration(
-                                hintText: '0,00',
-                                hintStyle: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      font: GoogleFonts.readexPro(
-                                        fontWeight: FontWeight.normal,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                      color: Color(0xFF14181B),
-                                      fontSize: 14.0,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.white,
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0x00000000),
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0x00000000),
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0x00000000),
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                filled: true,
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(
-                                    16.0, 12.0, 16.0, 12.0),
-                                prefixIcon: Icon(
-                                  Icons.attach_money,
-                                  color: Color(0xFF57636C),
-                                  size: 20.0,
-                                ),
-                              ),
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    font: GoogleFonts.readexPro(
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                    color: Color(0xFF14181B),
-                                    fontSize: 16.0,
-                                    letterSpacing: 0.0,
-                                    fontWeight: FontWeight.normal,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontStyle,
-                                  ),
-                              keyboardType: TextInputType.number,
-                              cursorColor: Color(0xFF19DB8A),
-                              validator: _model.textController2Validator
-                                  .asValidator(context),
-                            ),
-                          ].divide(SizedBox(height: 8.0)),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Descrição',
-                              style: FlutterFlowTheme.of(context)
-                                  .labelLarge
-                                  .override(
-                                    font: GoogleFonts.readexPro(
-                                      fontWeight: FontWeight.w600,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .labelLarge
-                                          .fontStyle,
-                                    ),
-                                    color: Color(0xFF57636C),
-                                    fontSize: 16.0,
-                                    letterSpacing: 0.0,
-                                    fontWeight: FontWeight.w600,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .labelLarge
-                                        .fontStyle,
-                                  ),
-                            ),
-                            TextFormField(
-                              controller: _model.textController3,
-                              focusNode: _model.textFieldFocusNode3,
-                              autofocus: false,
-                              textInputAction: TextInputAction.done,
-                              obscureText: false,
-                              decoration: InputDecoration(
-                                hintText: 'Descreva seu produto...',
-                                hintStyle: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      font: GoogleFonts.readexPro(
-                                        fontWeight: FontWeight.normal,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                      color: Color(0xFF14181B),
-                                      fontSize: 14.0,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.white,
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0x00000000),
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0x00000000),
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0x00000000),
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                filled: true,
-                                contentPadding: EdgeInsetsDirectional.fromSTEB(
-                                    16.0, 12.0, 16.0, 12.0),
-                              ),
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    font: GoogleFonts.readexPro(
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                    color: Color(0xFF14181B),
-                                    fontSize: 16.0,
-                                    letterSpacing: 0.0,
-                                    fontWeight: FontWeight.normal,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontStyle,
-                                  ),
-                              maxLines: 4,
-                              minLines: 3,
-                              keyboardType: TextInputType.multiline,
-                              cursorColor: Color(0xFF19DB8A),
-                              validator: _model.textController3Validator
-                                  .asValidator(context),
-                            ),
-                          ].divide(SizedBox(height: 8.0)),
-                        ),
-                      ].divide(SizedBox(height: 16.0)),
-                    ),
-                  ),
-                  Row(
+          child: SingleChildScrollView(
+            child: Align(
+              alignment: AlignmentDirectional(0, -1),
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: 770, // Mantido para dispositivos maiores
+                ),
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 12),
+                  child: Column(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: FFButtonWidget(
-                          onPressed: () {
-                            print('Button pressed ...');
-                          },
-                          text: 'Salvar Alterações',
-                          options: FFButtonOptions(
-                            height: 50.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                                24.0, 0.0, 24.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                0.0, 0.0, 0.0, 0.0),
-                            color: Color(0xFF156F00),
-                            textStyle: FlutterFlowTheme.of(context)
-                                .titleMedium
-                                .override(
-                                  font: GoogleFonts.readexPro(
-                                    fontWeight: FontWeight.w600,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .titleMedium
-                                        .fontStyle,
-                                  ),
-                                  color: Color(0xFFF1F4F8),
-                                  fontSize: 16.0,
-                                  letterSpacing: 0.0,
-                                  fontWeight: FontWeight.w600,
-                                  fontStyle: FlutterFlowTheme.of(context)
-                                      .titleMedium
-                                      .fontStyle,
-                                ),
-                            elevation: 0.0,
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                              width: 1.0,
-                            ),
-                            borderRadius: BorderRadius.circular(12.0),
+                      // --- VISUALIZAÇÃO DA IMAGEM ---
+                      // Adaptação da área de upload de imagem para visualização
+                      Container(
+                        width: double.infinity,
+                        height: 330, // Aumentado para corresponder ao estilo do CadastroBarraca
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).primaryBackground,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: FlutterFlowTheme.of(context).alternate,
+                            width: 2,
                           ),
+                          image: imagemProvider != null 
+                              ? DecorationImage(image: imagemProvider, fit: BoxFit.cover) 
+                              : null,
+                        ),
+                        child: imagemProvider == null 
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.image, size: 64, color: FlutterFlowTheme.of(context).secondaryText),
+                                    Text('Imagem do Produto', style: FlutterFlowTheme.of(context).bodyMedium.copyWith(color: FlutterFlowTheme.of(context).secondaryText)),
+                                    // Adicione um botão para "Alterar Imagem" aqui se quiser
+                                  ],
+                                ),
+                              ) 
+                            : null,
+                      ),
+                      
+                      SizedBox(height: 12),
+                      
+                      // --- FORMULÁRIO ---
+                      Form(
+                        key: _model.formKey,
+                        autovalidateMode: AutovalidateMode.disabled,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            // 1. Campo Nome
+                            TextFormField(
+                              controller: _nomeController,
+                              focusNode: _nomeFocusNode,
+                              autofocus: true,
+                              textCapitalization: TextCapitalization.words,
+                              obscureText: false,
+                              decoration: InputDecoration(
+                                labelText: 'Nome do Produto',
+                                labelStyle: FlutterFlowTheme.of(context).labelMedium,
+                                hintStyle: FlutterFlowTheme.of(context).labelMedium,
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).alternate,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).error,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).error,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                filled: true,
+                                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                contentPadding: EdgeInsetsDirectional.fromSTEB(16, 20, 16, 20),
+                              ),
+                              style: FlutterFlowTheme.of(context).bodyLarge.copyWith(
+                                letterSpacing: 0.0,
+                              ),
+                              validator: (val) {
+                                if (val == null || val.isEmpty) {
+                                  return 'O nome é obrigatório';
+                                }
+                                return null;
+                              },
+                              inputFormatters: [
+                                // Adiciona o filtro de capitalização
+                                if (!isAndroid && !isiOS)
+                                  TextInputFormatter.withFunction(
+                                    (oldValue, newValue) {
+                                      return TextEditingValue(
+                                        selection: newValue.selection,
+                                        text: newValue.text.toCapitalization(TextCapitalization.words),
+                                      );
+                                    },
+                                  ),
+                              ],
+                            ),
+                            
+                            SizedBox(height: 12),
+
+                            // 2. Campo Preço
+                            TextFormField(
+                              controller: _precoController,
+                              focusNode: _precoFocusNode,
+                              autofocus: true,
+                              keyboardType: TextInputType.number,
+                              obscureText: false,
+                              decoration: InputDecoration(
+                                labelText: 'Preço (R\$)',
+                                labelStyle: FlutterFlowTheme.of(context).labelMedium,
+                                hintText: 'Ex: 10,50',
+                                hintStyle: FlutterFlowTheme.of(context).labelMedium,
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).alternate,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).error,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).error,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                filled: true,
+                                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                contentPadding: EdgeInsetsDirectional.fromSTEB(16, 20, 16, 20),
+                              ),
+                              style: FlutterFlowTheme.of(context).bodyLarge.copyWith(
+                                letterSpacing: 0.0,
+                              ),
+                              validator: (val) {
+                                if (val == null || val.isEmpty) {
+                                  return 'O preço é obrigatório';
+                                }
+                                if (double.tryParse(val.replaceAll(',', '.')) == null) {
+                                  return 'Preço inválido';
+                                }
+                                return null;
+                              },
+                            ),
+
+                            SizedBox(height: 12),
+                            
+                            // 3. Choice Chips para Categoria
+                            Text(
+                              'Categoria do Produto',
+                              style: FlutterFlowTheme.of(context).labelMedium.override(
+                                    font: GoogleFonts.inter(),
+                                    letterSpacing: 0.0,
+                                  ),
+                            ),
+                            SizedBox(height: 8),
+
+                            FlutterFlowChoiceChips(
+                              options: [
+                                ChipData('Hortifruti'), 
+                                ChipData('Doces'), 
+                                ChipData('Temperos'), 
+                                ChipData('Artesanato'), 
+                                ChipData('Salgados')
+                              ],
+                              onChanged: (val) => safeSetState(() => _model.choiceChipsValue = val?.firstOrNull),
+                              selectedChipStyle: ChipStyle(
+                                backgroundColor: FlutterFlowTheme.of(context).primary,
+                                textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                                      font: GoogleFonts.inter(),
+                                      color: Colors.white,
+                                      letterSpacing: 0.0,
+                                    ),
+                                iconColor: Colors.white,
+                                elevation: 0,
+                                borderColor: FlutterFlowTheme.of(context).primary,
+                                borderWidth: 2,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              unselectedChipStyle: ChipStyle(
+                                backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+                                textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                                      font: GoogleFonts.inter(),
+                                      color: FlutterFlowTheme.of(context).secondaryText,
+                                      letterSpacing: 0.0,
+                                    ),
+                                iconColor: FlutterFlowTheme.of(context).secondaryText,
+                                elevation: 0,
+                                borderColor: FlutterFlowTheme.of(context).alternate,
+                                borderWidth: 2,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              controller: _choiceChipsController,
+                              chipSpacing: 8,
+                              rowSpacing: 8,
+                              multiselect: false, // Mantido como single-select
+                              alignment: WrapAlignment.start,
+                              wrapped: true,
+                            ),
+
+                            SizedBox(height: 12),
+
+                            // 4. Campo Descrição
+                            TextFormField(
+                              controller: _descriptionController,
+                              focusNode: _descriptionFocusNode,
+                              autofocus: true,
+                              textCapitalization: TextCapitalization.words,
+                              obscureText: false,
+                              decoration: InputDecoration(
+                                labelText: 'Descrição do Produto...',
+                                labelStyle: FlutterFlowTheme.of(context).labelMedium,
+                                hintStyle: FlutterFlowTheme.of(context).labelMedium,
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).alternate,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).error,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).error,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                filled: true,
+                                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                contentPadding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+                              ),
+                              style: FlutterFlowTheme.of(context).bodyLarge.copyWith(
+                                letterSpacing: 0.0,
+                              ),
+                              maxLines: 5, // Ajustado para corresponder ao layout
+                              minLines: 3,
+                              validator: (val) {
+                                if (val == null || val.isEmpty) {
+                                  return 'A descrição é obrigatória';
+                                }
+                                return null;
+                              },
+                              inputFormatters: [
+                                // Adiciona o filtro de capitalização
+                                if (!isAndroid && !isiOS)
+                                  TextInputFormatter.withFunction(
+                                    (oldValue, newValue) {
+                                      return TextEditingValue(
+                                        selection: newValue.selection,
+                                        text: newValue.text.toCapitalization(TextCapitalization.words),
+                                      );
+                                    },
+                                  ),
+                              ],
+                            ),
+
+                            SizedBox(height: 32),
+
+                            // 5. Botão Salvar Alterações
+                            FFButtonWidget(
+                              onPressed: _isSaving ? null : () async {
+                                if (_model.formKey.currentState!.validate()) {
+                                  await _atualizarProduto();
+                                }
+                              },
+                              text: _isSaving ? 'Salvando...' : 'Salvar Alterações',
+                              options: FFButtonOptions(
+                                width: double.infinity,
+                                height: 48, // Altura ajustada
+                                padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                                // Cor copiada do botão Cadastrar Barraca (Laranja)
+                                color: Color(0xF3FD8E2B), 
+                                textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                      font: GoogleFonts.interTight(),
+                                      color: Colors.white,
+                                      letterSpacing: 0.0,
+                                    ),
+                                elevation: 3,
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(32), // Borda ajustada
+                              ),
+                            ),
+                          ].divide(SizedBox(height: 12)),
                         ),
                       ),
-                    ].divide(SizedBox(width: 12.0)),
+                    ].divide(SizedBox(height: 12)), // Espaçamento entre os blocos
                   ),
-                ].divide(SizedBox(height: 24.0)),
+                ),
               ),
             ),
           ),

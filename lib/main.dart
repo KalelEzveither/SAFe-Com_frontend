@@ -133,10 +133,17 @@ class _NavBarPageState extends State<NavBarPage> {
     final Map<String, Widget> tabs = {
       'FiltroBarracas': FiltroBarracasWidget(),
       'Home': HomeWidget(),
-      'Perfil': PerfilWidget(),
+      
+      // LÓGICA DE PERFIL DINÂMICO
+      'Perfil': _isVendedor ? PerfilFeiranteWidget() : PerfilWidget(),
     };
 
     // 2. Lista de Ícones (Comuns a todos)
+    if (!_isVendedor){
+
+    } else{
+      
+    }
     final List<BottomNavigationBarItem> items = [
       BottomNavigationBarItem(
         icon: FaIcon(

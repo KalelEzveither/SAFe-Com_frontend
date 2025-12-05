@@ -5,6 +5,8 @@ class Produto {
   final double preco;
   final String imagemUrl;
   final String categoria;
+  final int quantidadeEstoque;
+  final int? barracaId;
 
   Produto({
     required this.id,
@@ -13,6 +15,8 @@ class Produto {
     required this.preco,
     required this.imagemUrl,
     required this.categoria,
+    required this.quantidadeEstoque,
+    this.barracaId,
   });
 
   factory Produto.fromJson(Map<String, dynamic> json) {
@@ -21,9 +25,11 @@ class Produto {
       nome: json['nome'] ?? 'Sem Nome',
       descricao: json['descricao'] ?? '',
       preco: (json['preco'] as num).toDouble(),
-      // O Java/Jackson envia 'imagemUrl' (camelCase) por padrão
-      imagemUrl: json['imagemUrl'] ?? '', 
+      imagemUrl: json['imagemUrl'] ?? '',
       categoria: json['categoria'] ?? 'Geral',
+      // O Java manda 'quantidadeEstoque' no JSON
+      quantidadeEstoque: json['quantidadeEstoque'] ?? 0, // <--- Capture aqui
+      barracaId: json['barracaId'],
     );
   }
 }

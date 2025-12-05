@@ -1,30 +1,36 @@
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/form_field_controller.dart';
-import 'editar_produto_widget.dart' show EditarProdutoWidget;
+import '/flutter_flow/upload_data.dart'; // <--- VERIFIQUE SE TEM ESSE IMPORT
 import 'package:flutter/material.dart';
+
+import 'editar_produto_widget.dart';
 
 class EditarProdutoModel extends FlutterFlowModel<EditarProdutoWidget> {
   ///  State fields for stateful widgets in this page.
 
   final formKey = GlobalKey<FormState>();
-  // State field(s) for TextField widget.
+
+  // Seus controladores que já existiam
   FocusNode? textFieldFocusNode1;
   TextEditingController? textController1;
   String? Function(BuildContext, String?)? textController1Validator;
-  // State field(s) for ChoiceChips widget.
-  FormFieldController<List<String>>? choiceChipsValueController;
-  String? get choiceChipsValue =>
-      choiceChipsValueController?.value?.firstOrNull;
-  set choiceChipsValue(String? val) =>
-      choiceChipsValueController?.value = val != null ? [val] : [];
-  // State field(s) for TextField widget.
+
   FocusNode? textFieldFocusNode2;
   TextEditingController? textController2;
   String? Function(BuildContext, String?)? textController2Validator;
-  // State field(s) for TextField widget.
+
   FocusNode? textFieldFocusNode3;
   TextEditingController? textController3;
   String? Function(BuildContext, String?)? textController3Validator;
+
+  // Choice Chips
+  FormFieldController<List<String>>? choiceChipsValueController;
+  String? choiceChipsValue;
+
+  // --- ADICIONE ESTAS DUAS LINHAS AQUI ---
+  bool isDataUploading = false;
+  FFUploadedFile? uploadedLocalFile; 
+  // ---------------------------------------
 
   @override
   void initState(BuildContext context) {}

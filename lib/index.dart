@@ -3,8 +3,6 @@ export '/cadastro/cadastro_widget.dart' show CadastroWidget;
 export '/login/login_widget.dart' show LoginWidget;
 export '/filtro_barracas/filtro_barracas_widget.dart' show FiltroBarracasWidget;
 export '/perfil/perfil_widget.dart' show PerfilWidget;
-export '/cadastro_feirante/cadastro_feirante_widget.dart'
-    show CadastroFeiranteWidget;
 export '/politica_privacidade/politica_privacidade_widget.dart'
     show PoliticaPrivacidadeWidget;
 export '/home/home_widget.dart' show HomeWidget;
@@ -35,3 +33,5 @@ export '/politicas_aplicativo/politicas_aplicativo_widget.dart'
 export '/perfil_feirante/perfil_feirante_widget.dart' show PerfilFeiranteWidget;
 export '/pagamento_pix/pagamento_pix_widget.dart' show PagamentoPixWidget;
 export '/editar_produto/editar_produto_widget.dart' show EditarProdutoWidget;
+export '/cadastro_feirante/cadastro_feirante_widget.dart'
+    show CadastroFeiranteWidget;

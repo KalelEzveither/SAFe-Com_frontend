@@ -10,27 +10,36 @@ class CadastroFeiranteModel extends FlutterFlowModel<CadastroFeiranteWidget> {
   FocusNode? nomeFocusNode;
   TextEditingController? nomeTextController;
   String? Function(BuildContext, String?)? nomeTextControllerValidator;
+  // State field(s) for CPF widget.
+  FocusNode? cpfFocusNode;
+  TextEditingController? cpfTextController;
+  String? Function(BuildContext, String?)? cpfTextControllerValidator;
+  // State field(s) for Celular widget.
+  FocusNode? celularFocusNode;
+  TextEditingController? celularTextController;
+  String? Function(BuildContext, String?)? celularTextControllerValidator;
   // State field(s) for E-mail widget.
   FocusNode? eMailFocusNode;
   TextEditingController? eMailTextController;
   String? Function(BuildContext, String?)? eMailTextControllerValidator;
-  // State field(s) for Senha widget.
-  FocusNode? senhaFocusNode1;
-  TextEditingController? senhaTextController1;
-  late bool senhaVisibility1;
-  String? Function(BuildContext, String?)? senhaTextController1Validator;
-  // State field(s) for Senha widget.
-  FocusNode? senhaFocusNode2;
-  TextEditingController? senhaTextController2;
-  late bool senhaVisibility2;
-  String? Function(BuildContext, String?)? senhaTextController2Validator;
-  // State field(s) for CheckboxAceitoTermos widget.
-  bool? checkboxAceitoTermosValue;
+  // State field(s) for senha widget.
+  FocusNode? senhaFocusNode;
+  TextEditingController? senhaTextController;
+  late bool senhaVisibility;
+  String? Function(BuildContext, String?)? senhaTextControllerValidator;
+  // State field(s) for ConfirmarSenha widget.
+  FocusNode? confirmarSenhaFocusNode;
+  TextEditingController? confirmarSenhaTextController;
+  late bool confirmarSenhaVisibility;
+  String? Function(BuildContext, String?)?
+      confirmarSenhaTextControllerValidator;
+  // State field(s) for Checkbox widget.
+  bool? checkboxValue;
 
   @override
   void initState(BuildContext context) {
-    senhaVisibility1 = false;
-    senhaVisibility2 = false;
+    senhaVisibility = false;
+    confirmarSenhaVisibility = false;
   }
 
   @override
@@ -38,13 +47,19 @@ class CadastroFeiranteModel extends FlutterFlowModel<CadastroFeiranteWidget> {
     nomeFocusNode?.dispose();
     nomeTextController?.dispose();
 
+    cpfFocusNode?.dispose();
+    cpfTextController?.dispose();
+
+    celularFocusNode?.dispose();
+    celularTextController?.dispose();
+
     eMailFocusNode?.dispose();
     eMailTextController?.dispose();
 
-    senhaFocusNode1?.dispose();
-    senhaTextController1?.dispose();
+    senhaFocusNode?.dispose();
+    senhaTextController?.dispose();
 
-    senhaFocusNode2?.dispose();
-    senhaTextController2?.dispose();
+    confirmarSenhaFocusNode?.dispose();
+    confirmarSenhaTextController?.dispose();
   }
 }

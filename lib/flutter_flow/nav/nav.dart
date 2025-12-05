@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../model/barraca_model.dart';
+import '/model/barraca_model.dart';
+import '/model/produto_model.dart';
+import '/model/cart_item_model.dart';
 import '/main.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 
@@ -78,31 +79,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               params.isEmpty ? NavBarPage(initialPage: 'Home') : HomeWidget(),
         ),
         FFRoute(
-          name: BarracasHortifrutiWidget.routeName,
-          path: BarracasHortifrutiWidget.routePath,
-          builder: (context, params) => BarracasHortifrutiWidget(),
-        ),
-        FFRoute(
-          name: BarracasDoceWidget.routeName,
-          path: BarracasDoceWidget.routePath,
-          builder: (context, params) => BarracasDoceWidget(),
-        ),
-        FFRoute(
-          name: BarracasSalgadosWidget.routeName,
-          path: BarracasSalgadosWidget.routePath,
-          builder: (context, params) => BarracasSalgadosWidget(),
-        ),
-        FFRoute(
-          name: BarracasTemperosWidget.routeName,
-          path: BarracasTemperosWidget.routePath,
-          builder: (context, params) => BarracasTemperosWidget(),
-        ),
-        FFRoute(
-          name: BarracasArtesanatosWidget.routeName,
-          path: BarracasArtesanatosWidget.routePath,
-          builder: (context, params) => BarracasArtesanatosWidget(),
-        ),
-        FFRoute(
           name: DetalhesBarracaWidget.routeName,
           path: DetalhesBarracaWidget.routePath,
           builder: (context, params) => DetalhesBarracaWidget(
@@ -113,12 +89,23 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: CriarProdutoWidget.routeName,
           path: CriarProdutoWidget.routePath,
-          builder: (context, params) => CriarProdutoWidget(),
+          builder: (context, params) {
+            // Recupera o 'barracaId'
+            final barracaId = params.state.extraMap['barracaId'] as int;
+            return CriarProdutoWidget(barracaId: barracaId);
+          },
         ),
         FFRoute(
           name: DetalhesProdutoWidget.routeName,
           path: DetalhesProdutoWidget.routePath,
-          builder: (context, params) => DetalhesProdutoWidget(),
+          builder: (context, params) {
+            // Recupera o objeto produto passado no extra
+            final produto = params.state.extraMap['produto'] as Produto;
+            
+            return DetalhesProdutoWidget(
+              produto: produto,
+            );
+          },
         ),
         FFRoute(
           name: CarrinhoWidget.routeName,
@@ -163,12 +150,23 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: PagamentoPixWidget.routeName,
           path: PagamentoPixWidget.routePath,
-          builder: (context, params) => PagamentoPixWidget(),
+          builder: (context, params) {
+            // Pega os parâmetros passados pelo Carrinho
+            final Map<String, dynamic> args = params.state.extraMap;
+            return PagamentoPixWidget(
+              valorTotal: args['valorTotal'] as double,
+              itens: args['itens'] as List<CartItem>,
+            );
+          },
         ),
         FFRoute(
           name: EditarProdutoWidget.routeName,
           path: EditarProdutoWidget.routePath,
-          builder: (context, params) => EditarProdutoWidget(),
+          builder: (context, params) {
+            // Recupera o objeto 'produto' para edição
+            final produto = params.state.extraMap['produto'] as Produto;
+            return EditarProdutoWidget(produto: produto);
+          },
         ),
         FFRoute(
           name: CadastroFeiranteWidget.routeName,

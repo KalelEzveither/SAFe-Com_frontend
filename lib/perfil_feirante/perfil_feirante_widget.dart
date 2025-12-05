@@ -1,3 +1,4 @@
+import '../services/session_service.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -20,12 +21,29 @@ class PerfilFeiranteWidget extends StatefulWidget {
 class _PerfilFeiranteWidgetState extends State<PerfilFeiranteWidget> {
   late PerfilFeiranteModel _model;
 
+  String _nomeUsuario = "";
+  String _emailUsuario = "";
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => PerfilFeiranteModel());
+    _carregarUsuario();
+  }
+
+  void _carregarUsuario() async {
+    // Chama seu serviço existente para pegar o usuário
+    final userData = await SessionService.getUser();
+
+    // Verifica se veio dados e se tem o campo 'nome'
+    if (userData != null && userData.containsKey('nome')) {
+      setState(() {
+        _nomeUsuario = userData['nome']; // Atualiza a variável da tela
+        _emailUsuario = userData['email'];
+      });
+    }
   }
 
   @override
@@ -138,7 +156,7 @@ class _PerfilFeiranteWidgetState extends State<PerfilFeiranteWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Fulano de tal',
+                                  '$_nomeUsuario',
                                   style: FlutterFlowTheme.of(context)
                                       .headlineSmall
                                       .override(
@@ -165,7 +183,7 @@ class _PerfilFeiranteWidgetState extends State<PerfilFeiranteWidget> {
                                   padding: EdgeInsetsDirectional.fromSTEB(
                                       0.0, 4.0, 0.0, 0.0),
                                   child: Text(
-                                    'fulaninho@gmail.com',
+                                    '$_emailUsuario',
                                     style: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -401,7 +419,7 @@ class _PerfilFeiranteWidgetState extends State<PerfilFeiranteWidget> {
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   12.0, 0.0, 0.0, 0.0),
                               child: Text(
-                                'Editar Perfi',
+                                'Editar Perfil',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyLarge
                                     .override(
@@ -721,39 +739,46 @@ class _PerfilFeiranteWidgetState extends State<PerfilFeiranteWidget> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 15.0, 0.0, 0.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(15.0, 0.0, 0.0, 0.0),
-                        child: Icon(
-                          Icons.dangerous_outlined,
-                          color: Color(0xFFEA0606),
-                          size: 30.0,
+                InkWell(
+                  onTap: () {
+                    print('Saindo...');
+                    SessionService.logout();
+                    context.pushNamed(LoginWidget.routeName);
+                  },
+                  child: Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 15.0, 0.0, 0.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Padding(
+                          padding:
+                              EdgeInsetsDirectional.fromSTEB(15.0, 0.0, 0.0, 0.0),
+                          child: Icon(
+                            Icons.dangerous_outlined,
+                            color: Color(0xFFEA0606),
+                            size: 30.0,
+                          ),
                         ),
-                      ),
-                      Text(
-                        ' Sair',
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              font: GoogleFonts.inter(
+                        Text(
+                          ' Sair',
+                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                font: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w600,
+                                  fontStyle: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .fontStyle,
+                                ),
+                                color: Color(0xFFD80000),
+                                fontSize: 15.0,
+                                letterSpacing: 0.0,
                                 fontWeight: FontWeight.w600,
                                 fontStyle: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .fontStyle,
                               ),
-                              color: Color(0xFFD80000),
-                              fontSize: 15.0,
-                              letterSpacing: 0.0,
-                              fontWeight: FontWeight.w600,
-                              fontStyle: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .fontStyle,
-                            ),
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../model/barraca_model.dart';
 import '../model/produto_model.dart';
 import '../services/barraca_service.dart';
@@ -200,18 +202,23 @@ class _DetalhesBarracaWidgetState extends State<DetalhesBarracaWidget> {
                                     padding: EdgeInsetsDirectional.fromSTEB(0.0, 1.0, 1.0, 1.0),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(6.0),
-                                      child: Image.network(
-                                        (produto.imagemUrl.isNotEmpty)
-                                            ? produto.imagemUrl
-                                            : 'https://via.placeholder.com/80', // Imagem padrão segura
-                                        width: 80.0,
-                                        height: 80.0,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) => Container(
-                                          width: 80, height: 80, color: Colors.grey[200],
-                                          child: Icon(Icons.fastfood, color: Colors.grey),
-                                        ),
-                                      ),
+                                      child: produto.imagemUrl != null && produto.imagemUrl!.isNotEmpty
+                                          ? Image.memory( // <-- MUDANÇA AQUI: Usando Image.memory
+                                              base64Decode(produto.imagemUrl!), // <-- Decodifica o Base64 para Bytes
+                                              width: 80.0,
+                                              height: 80.0,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (ctx, err, stack) => Icon(Icons.fastfood, size: 40, color: Colors.grey),
+                                            )
+                                          : Container( // <-- Bloco para imagem placeholder se a URL estiver vazia
+                                              width: 80.0,
+                                              height: 80.0,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(6.0),
+                                                color: FlutterFlowTheme.of(context).alternate,
+                                              ),
+                                              child: Icon(Icons.fastfood, size: 40, color: FlutterFlowTheme.of(context).secondaryText),
+                                            ),
                                     ),
                                   ),
                                   // Detalhes (Nome e Descrição)

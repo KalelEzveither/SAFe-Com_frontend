@@ -66,11 +66,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               : PerfilWidget(),
         ),
         FFRoute(
-          name: CadastroFeiranteWidget.routeName,
-          path: CadastroFeiranteWidget.routePath,
-          builder: (context, params) => CadastroFeiranteWidget(),
-        ),
-        FFRoute(
           name: PoliticaPrivacidadeWidget.routeName,
           path: PoliticaPrivacidadeWidget.routePath,
           builder: (context, params) => PoliticaPrivacidadeWidget(),
@@ -172,6 +167,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: EditarProdutoWidget.routeName,
           path: EditarProdutoWidget.routePath,
           builder: (context, params) => EditarProdutoWidget(),
+        ),
+        FFRoute(
+          name: CadastroFeiranteWidget.routeName,
+          path: CadastroFeiranteWidget.routePath,
+          builder: (context, params) => CadastroFeiranteWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

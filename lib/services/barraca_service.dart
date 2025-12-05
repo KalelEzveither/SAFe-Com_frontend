@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../model/barraca_model.dart'; // Importe o modelo que criamos acima
+import '../model/barraca_model.dart'; 
+import '../model/produto_model.dart';
 
 class BarracaService {
   static const String _baseUrl = 'http://192.168.0.118:8080/api/barracas';
@@ -21,6 +22,25 @@ class BarracaService {
     } catch (e) {
       print('Erro no BarracaService: $e');
       return []; // Retorna lista vazia em caso de erro para não travar o app
+    }
+  }
+
+  Future<List<Produto>> getProdutosPorBarraca(int barracaId) async {
+    try {
+      final url = Uri.parse('$_baseUrl/produtos/barraca/$barracaId');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        List<dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
+        return body.map((item) => Produto.fromJson(item)).toList();
+      } else if (response.statusCode == 204) {
+        return []; // Barraca sem produtos
+      } else {
+        throw Exception('Erro ao buscar produtos: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Erro no BarracaService: $e');
+      return [];
     }
   }
 }

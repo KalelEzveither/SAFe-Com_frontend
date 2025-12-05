@@ -117,7 +117,7 @@ class _NavBarPageState extends State<NavBarPage> {
       'FiltroBarracas': FiltroBarracasWidget(),
       'Perfil': PerfilWidget(),
       'Home': HomeWidget(),
-      'detalhes_Barraca': DetalhesBarracaWidget(),
+      'detalhes_Barraca': MeusProdutosWidget(),
     };
     final currentIndex = tabs.keys.toList().indexOf(_currentPageName);
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../model/barraca_model.dart';
 import '/main.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 
@@ -104,9 +105,10 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: DetalhesBarracaWidget.routeName,
           path: DetalhesBarracaWidget.routePath,
-          builder: (context, params) => params.isEmpty
-              ? NavBarPage(initialPage: 'detalhes_Barraca')
-              : DetalhesBarracaWidget(),
+          builder: (context, params) => DetalhesBarracaWidget(
+            // Aqui recuperamos o objeto "barraca" passado no extra
+            barraca: params.state.extraMap['barraca'] as Barraca, 
+          ),
         ),
         FFRoute(
           name: CriarProdutoWidget.routeName,

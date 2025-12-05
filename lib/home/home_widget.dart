@@ -5,6 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'home_model.dart';
 export 'home_model.dart';
+import '/model/barraca_model.dart';
+import '/services/barraca_service.dart';
+import 'dart:convert'; // Para base64Decode
 
 import '/services/session_service.dart';
 
@@ -21,6 +24,10 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
   late HomeModel _model;
 
+  List<Barraca> _listaBarracas = [];
+  bool _isLoading = true;
+  final BarracaService _barracaService = BarracaService();
+
   String _nomeUsuario = "Visitante";
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -34,6 +41,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     _model.textFieldFocusNode ??= FocusNode();
     _model.textFieldFocusNode!.addListener(() => safeSetState(() {}));
     _carregarUsuario();
+    _carregarBarracas();
   }
 
   void _carregarUsuario() async {
@@ -46,6 +54,14 @@ class _HomeWidgetState extends State<HomeWidget> {
         _nomeUsuario = userData['nome']; // Atualiza a variável da tela
       });
     }
+  }
+
+  void _carregarBarracas() async {
+    var barracas = await _barracaService.getBarracas();
+    setState(() {
+      _listaBarracas = barracas;
+      _isLoading = false;
+    });
   }
 
   @override
@@ -90,7 +106,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                     ),
               ),
               Text(
-                'Encontre seu ítens',
+                'Lista de barracas',
                 style: FlutterFlowTheme.of(context).headlineMedium.override(
                       font: GoogleFonts.interTight(
                         fontWeight: FlutterFlowTheme.of(context)
@@ -142,7 +158,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                     textCapitalization: TextCapitalization.sentences,
                     obscureText: false,
                     decoration: InputDecoration(
-                      labelText: 'Encontre ítens...',
+                      labelText: 'Encontre barracas...',
                       labelStyle:
                           FlutterFlowTheme.of(context).labelMedium.override(
                                 font: GoogleFonts.inter(
@@ -270,608 +286,126 @@ class _HomeWidgetState extends State<HomeWidget> {
                     ],
                   ),
                 ),
-                Container(
-                  width: double.infinity,
-                  height: 200.0,
-                  decoration: BoxDecoration(),
-                  child: ListView(
-                    padding: EdgeInsets.fromLTRB(
-                      16.0,
-                      0,
-                      16.0,
-                      0,
-                    ),
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 12.0),
-                        child: Container(
-                          width: 190.0,
-                          height: 100.0,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(
-                              color: FlutterFlowTheme.of(context).alternate,
-                              width: 1.0,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(4.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    child: Image.network(
-                                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRK9sYlgleRtN47LWEVd7cJk5_rEDxZskfdzdu4t11XsVxMR0STcJBfyRZ_-ePtVHiVXYA&usqp=CAU',
-                                      width: 300.0,
-                                      height: 100.0,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      4.0, 0.0, 0.0, 4.0),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Alface Crespa',
-                                        style: FlutterFlowTheme.of(context)
-                                            .labelSmall
-                                            .override(
-                                              font: GoogleFonts.inter(
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelSmall
-                                                        .fontWeight,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelSmall
-                                                        .fontStyle,
-                                              ),
-                                              letterSpacing: 0.0,
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontStyle,
-                                            ),
-                                      ),
-                                      Text(
-                                        'R\$ 2,50',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyLarge
-                                            .override(
-                                              font: GoogleFonts.inter(
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge
-                                                        .fontWeight,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge
-                                                        .fontStyle,
-                                              ),
-                                              letterSpacing: 0.0,
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyLarge
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyLarge
-                                                      .fontStyle,
-                                            ),
-                                      ),
-                                    ].divide(SizedBox(height: 4.0)),
-                                  ),
-                                ),
-                              ].divide(SizedBox(height: 8.0)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 12.0),
-                        child: Container(
-                          width: 190.0,
-                          height: 100.0,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(
-                              color: FlutterFlowTheme.of(context).alternate,
-                              width: 1.0,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(4.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    child: Image.network(
-                                      'https://blog.raizs.com.br/oboofekr/2025/03/tomate-rasteiro-e-italiano-750x750.jpg',
-                                      width: 300.0,
-                                      height: 100.0,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      4.0, 0.0, 0.0, 4.0),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Tomate Italiano',
-                                        style: FlutterFlowTheme.of(context)
-                                            .labelSmall
-                                            .override(
-                                              font: GoogleFonts.inter(
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelSmall
-                                                        .fontWeight,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelSmall
-                                                        .fontStyle,
-                                              ),
-                                              letterSpacing: 0.0,
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontStyle,
-                                            ),
-                                      ),
-                                      Text(
-                                        'R\$ 4,00 kg',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyLarge
-                                            .override(
-                                              font: GoogleFonts.inter(
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge
-                                                        .fontWeight,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge
-                                                        .fontStyle,
-                                              ),
-                                              letterSpacing: 0.0,
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyLarge
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyLarge
-                                                      .fontStyle,
-                                            ),
-                                      ),
-                                    ].divide(SizedBox(height: 4.0)),
-                                  ),
-                                ),
-                              ].divide(SizedBox(height: 8.0)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 12.0),
-                        child: Container(
-                          width: 190.0,
-                          height: 100.0,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(
-                              color: FlutterFlowTheme.of(context).alternate,
-                              width: 1.0,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(4.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    child: Image.network(
-                                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCCuyird4GPGaxa7AO9plyOLGi_NlwaLN5Uw&s',
-                                      width: 300.0,
-                                      height: 100.0,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      4.0, 0.0, 0.0, 4.0),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Cenoura',
-                                        style: FlutterFlowTheme.of(context)
-                                            .labelSmall
-                                            .override(
-                                              font: GoogleFonts.inter(
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelSmall
-                                                        .fontWeight,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelSmall
-                                                        .fontStyle,
-                                              ),
-                                              letterSpacing: 0.0,
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontStyle,
-                                            ),
-                                      ),
-                                      Text(
-                                        'R\$ 7,00 kg',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyLarge
-                                            .override(
-                                              font: GoogleFonts.inter(
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge
-                                                        .fontWeight,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyLarge
-                                                        .fontStyle,
-                                              ),
-                                              letterSpacing: 0.0,
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyLarge
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyLarge
-                                                      .fontStyle,
-                                            ),
-                                      ),
-                                    ].divide(SizedBox(height: 4.0)),
-                                  ),
-                                ),
-                              ].divide(SizedBox(height: 8.0)),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ].divide(SizedBox(width: 8.0)),
-                  ),
-                ),
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 0.0, 0.0),
                   child: Text(
                     'Barracas mais acessadas',
                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                           font: GoogleFonts.inter(
-                            fontWeight: FlutterFlowTheme.of(context)
-                                .bodyLarge
-                                .fontWeight,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyLarge
-                                .fontStyle,
+                            fontWeight: FlutterFlowTheme.of(context).bodyLarge.fontWeight,
                           ),
-                          letterSpacing: 0.0,
-                          fontWeight:
-                              FlutterFlowTheme.of(context).bodyLarge.fontWeight,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                         ),
                   ),
                 ),
 
-                // This list view is "shrink wrapped" this can affect your app performance, we would suggest limiting the number of items you query in this list view.
-                //
-                // The list view is shrink wrapped to prevent the page from having two scrollable elements. The parent column is the element that is scrollable and it provides a smooth user experience.
+                // Lista Dinâmica de Barracas
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
-                  child: ListView(
-                    padding: EdgeInsets.fromLTRB(
-                      0,
-                      0,
-                      0,
-                      44.0,
-                    ),
-                    primary: false,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    children: [
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
-                            16.0, 4.0, 16.0, 0.0),
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(
-                              color: FlutterFlowTheme.of(context).alternate,
-                              width: 1.0,
+                  child: _isLoading
+                      ? Center(child: CircularProgressIndicator()) // Loading...
+                      : _listaBarracas.isEmpty
+                          ? Center(child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Text("Nenhuma barraca encontrada."),
+                            ))
+                          : ListView.builder(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 44.0),
+                              primary: false,
+                              shrinkWrap: true,
+                              scrollDirection: Axis.vertical,
+                              itemCount: _listaBarracas.length,
+                              itemBuilder: (context, index) {
+                                final barraca = _listaBarracas[index];
+
+                                return Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 4.0, 16.0, 12.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      // Navegação para Detalhes
+                                      context.pushNamed(
+                                        'detalhes_Barraca', // Confirme se o nome da rota é esse no main.dart
+                                        extra: { "barraca": barraca },
+                                      );
+                                    },
+                                    child: Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.of(context).secondaryBackground,
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        border: Border.all(
+                                          color: FlutterFlowTheme.of(context).alternate,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          // --- IMAGEM DA BARRACA (Base64) ---
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(8.0),
+                                              topRight: Radius.circular(8.0),
+                                            ),
+                                            child: barraca.imagemUrl != null && barraca.imagemUrl!.isNotEmpty
+                                                ? Image.memory(
+                                                    base64Decode(barraca.imagemUrl!),
+                                                    width: double.infinity,
+                                                    height: 200.0,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context, error, stackTrace) => 
+                                                        Container(height: 200, color: Colors.grey[200], child: Icon(Icons.store, size: 50)),
+                                                  )
+                                                : Container(
+                                                    width: double.infinity,
+                                                    height: 200.0,
+                                                    color: FlutterFlowTheme.of(context).alternate,
+                                                    child: Icon(Icons.store, size: 60, color: FlutterFlowTheme.of(context).secondaryText),
+                                                  ),
+                                          ),
+                                          
+                                          // --- TEXTOS ---
+                                          Padding(
+                                            padding: EdgeInsets.all(12.0),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // Status (Substituindo o "Barraca 3")
+                                                Text(
+                                                  barraca.isAberta ? 'Aberto' : 'Fechado',
+                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                        font: GoogleFonts.inter(),
+                                                        color: barraca.isAberta ? Colors.green : Colors.red,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                ),
+                                                // Nome da Barraca (Estilo Headline)
+                                                Text(
+                                                  barraca.nome,
+                                                  style: FlutterFlowTheme.of(context).headlineMedium.override(
+                                                        font: GoogleFonts.interTight(),
+                                                      ),
+                                                ),
+                                                // Descrição (Estilo LabelSmall)
+                                                Text(
+                                                  barraca.descricao,
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.ellipsis, // Três pontinhos se for grande
+                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                        font: GoogleFonts.inter(),
+                                                      ),
+                                                ),
+                                              ].divide(SizedBox(height: 4.0)),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(0.0),
-                                  bottomRight: Radius.circular(0.0),
-                                  topLeft: Radius.circular(8.0),
-                                  topRight: Radius.circular(8.0),
-                                ),
-                                child: Image.network(
-                                  'https://saopauloantiga.com.br/wp-content/uploads/2018/08/eduardoarita.jpg',
-                                  width: double.infinity,
-                                  height: 200.0,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(12.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Barraca 3',
-                                      style: FlutterFlowTheme.of(context)
-                                          .labelSmall
-                                          .override(
-                                            font: GoogleFonts.inter(
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontStyle,
-                                            ),
-                                            letterSpacing: 0.0,
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelSmall
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelSmall
-                                                    .fontStyle,
-                                          ),
-                                    ),
-                                    Text(
-                                      'Biscoitos do Zé',
-                                      style: FlutterFlowTheme.of(context)
-                                          .headlineMedium
-                                          .override(
-                                            font: GoogleFonts.interTight(
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .headlineMedium
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .headlineMedium
-                                                      .fontStyle,
-                                            ),
-                                            letterSpacing: 0.0,
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .headlineMedium
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .headlineMedium
-                                                    .fontStyle,
-                                          ),
-                                    ),
-                                    Text(
-                                      'Os biscoitos mais gostosos de Vitória da Conquista',
-                                      style: FlutterFlowTheme.of(context)
-                                          .labelSmall
-                                          .override(
-                                            font: GoogleFonts.inter(
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontStyle,
-                                            ),
-                                            letterSpacing: 0.0,
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelSmall
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelSmall
-                                                    .fontStyle,
-                                          ),
-                                    ),
-                                  ].divide(SizedBox(height: 4.0)),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
-                            16.0, 4.0, 16.0, 0.0),
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(
-                              color: FlutterFlowTheme.of(context).alternate,
-                              width: 1.0,
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(0.0),
-                                  bottomRight: Radius.circular(0.0),
-                                  topLeft: Radius.circular(8.0),
-                                  topRight: Radius.circular(8.0),
-                                ),
-                                child: Image.asset(
-                                  'assets/images/BHortalica.jpg',
-                                  width: double.infinity,
-                                  height: 200.0,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(12.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Barraca 5',
-                                      style: FlutterFlowTheme.of(context)
-                                          .labelSmall
-                                          .override(
-                                            font: GoogleFonts.inter(
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontStyle,
-                                            ),
-                                            letterSpacing: 0.0,
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelSmall
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelSmall
-                                                    .fontStyle,
-                                          ),
-                                    ),
-                                    Text(
-                                      'Horta da Sil',
-                                      style: FlutterFlowTheme.of(context)
-                                          .headlineMedium
-                                          .override(
-                                            font: GoogleFonts.interTight(
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .headlineMedium
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .headlineMedium
-                                                      .fontStyle,
-                                            ),
-                                            letterSpacing: 0.0,
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .headlineMedium
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .headlineMedium
-                                                    .fontStyle,
-                                          ),
-                                    ),
-                                    Text(
-                                      'Hortaliças fresquinhas da minha horta pra sua mesa',
-                                      style: FlutterFlowTheme.of(context)
-                                          .labelSmall
-                                          .override(
-                                            font: GoogleFonts.inter(
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .fontStyle,
-                                            ),
-                                            letterSpacing: 0.0,
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelSmall
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelSmall
-                                                    .fontStyle,
-                                          ),
-                                    ),
-                                  ].divide(SizedBox(height: 4.0)),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ].divide(SizedBox(height: 8.0)),
-                  ),
                 ),
               ].addToEnd(SizedBox(height: 32.0)),
             ),

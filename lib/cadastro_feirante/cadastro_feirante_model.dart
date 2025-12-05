@@ -36,6 +36,10 @@ class CadastroFeiranteModel extends FlutterFlowModel<CadastroFeiranteWidget> {
   // State field(s) for Checkbox widget.
   bool? checkboxValue;
 
+  get categoriasBarracaValueController => null;
+
+  set categoriasBarracaValues(List<String> categoriasBarracaValues) {}
+
   @override
   void initState(BuildContext context) {
     senhaVisibility = false;

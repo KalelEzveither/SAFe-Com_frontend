@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'login_model.dart';
+// ADICIONADO: Import do serviço de autenticação
+import '/services/auth_service.dart';
+
 export 'login_model.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -22,6 +25,10 @@ class _LoginWidgetState extends State<LoginWidget> {
   late LoginModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // ADICIONADO: Instancia o servico de autenticacao e variavel de loading
+  final _authService = AuthService();
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -389,15 +396,68 @@ class _LoginWidgetState extends State<LoginWidget> {
                           ),
                         ),
                       ),
+                      // LÓGICA DE LOGIN APLICADA AQUI
                       FFButtonWidget(
-                        onPressed: () async {
-                          context.pushNamed(HomeWidget.routeName);
-                        },
+                        onPressed: _isLoading
+                            ? null
+                            : () async {
+                                // 1. Validação
+                                if (_model.emailTextController.text.isEmpty ||
+                                    _model.senhaTextController.text.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Preencha e-mail e senha!')),
+                                  );
+                                  return;
+                                }
+
+                                // 2. Mostra carregamento
+                                setState(() => _isLoading = true);
+
+                                // 3. Chama o Backend
+                                final usuario = await _authService.login(
+                                  _model.emailTextController.text,
+                                  _model.senhaTextController.text,
+                                );
+
+                                // 4. Para carregamento
+                                if (mounted)
+                                  setState(() => _isLoading = false);
+
+                                // 5. Verifica sucesso
+                                if (usuario != null) {
+                                  print("Login Sucesso: ${usuario['nome']}");
+
+                                  if (context.mounted) {
+                                    context.pushNamed(HomeWidget.routeName);
+                                  }
+                                } else {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            'Login falhou. Verifique seu email ou senha.'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
                         text: '      Entrar             ',
-                        icon: FaIcon(
-                          FontAwesomeIcons.signInAlt,
-                          size: 15.0,
-                        ),
+                        icon: _isLoading
+                            ? Container(
+                                width: 15,
+                                height: 15,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : FaIcon(
+                                FontAwesomeIcons.signInAlt,
+                                size: 15.0,
+                              ),
                         options: FFButtonOptions(
                           height: 40.0,
                           padding: EdgeInsetsDirectional.fromSTEB(
@@ -405,25 +465,26 @@ class _LoginWidgetState extends State<LoginWidget> {
                           iconPadding: EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 0.0, 0.0),
                           color: Color(0xF3FD8E2B),
-                          textStyle:
-                              FlutterFlowTheme.of(context).titleSmall.override(
-                                    font: GoogleFonts.interTight(
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .titleSmall
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .titleSmall
-                                          .fontStyle,
-                                    ),
-                                    color: Colors.white,
-                                    letterSpacing: 0.0,
-                                    fontWeight: FlutterFlowTheme.of(context)
-                                        .titleSmall
-                                        .fontWeight,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .titleSmall
-                                        .fontStyle,
-                                  ),
+                          textStyle: FlutterFlowTheme.of(context)
+                              .titleSmall
+                              .override(
+                                font: GoogleFonts.interTight(
+                                  fontWeight: FlutterFlowTheme.of(context)
+                                      .titleSmall
+                                      .fontWeight,
+                                  fontStyle: FlutterFlowTheme.of(context)
+                                      .titleSmall
+                                      .fontStyle,
+                                ),
+                                color: Colors.white,
+                                letterSpacing: 0.0,
+                                fontWeight: FlutterFlowTheme.of(context)
+                                    .titleSmall
+                                    .fontWeight,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .titleSmall
+                                    .fontStyle,
+                              ),
                           elevation: 0.0,
                           borderRadius: BorderRadius.circular(24.0),
                         ),

@@ -55,7 +55,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.mycompany.safecom"
-        minSdkVersion 23
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -87,4 +87,19 @@ flutter {
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.0"
+}
+
+// WORKAROUND: Force stable versions of AndroidX libraries to avoid API 36 requirements
+configurations.all {
+    resolutionStrategy {
+        force "androidx.browser:browser:1.8.0"
+        
+        // Força tanto a versão KTX quanto a base para Activity
+        force "androidx.activity:activity-ktx:1.9.3"
+        force "androidx.activity:activity:1.9.3"
+        
+        // Força tanto a versão KTX quanto a base para Core
+        force "androidx.core:core-ktx:1.13.1"
+        force "androidx.core:core:1.13.1"
+    }
 }
